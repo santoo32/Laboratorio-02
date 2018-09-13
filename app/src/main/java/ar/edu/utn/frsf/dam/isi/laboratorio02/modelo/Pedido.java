@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Pedido {
 
-    public enum Estado { REALIZADO, ACEPTADO,EN_PREPARACION,EN_ENVIO,ENTREGADO,CANCELADO}
+    public enum Estado { REALIZADO, ACEPTADO, RECHAZADO,EN_PREPARACION,LISTO,ENTREGADO,CANCELADO}
 
     private Integer id;
     private Date fecha;
@@ -16,10 +16,36 @@ public class Pedido {
     private String mailContacto;
     private Boolean retirar;
 
+    public String getDireccionEnvio() {
+        return direccionEnvio;
+    }
+
+    public void setDireccionEnvio(String direccionEnvio) {
+        this.direccionEnvio = direccionEnvio;
+    }
+
+    public String getMailContacto() {
+        return mailContacto;
+    }
+
+    public void setMailContacto(String mailContacto) {
+        this.mailContacto = mailContacto;
+    }
+
+    public Boolean getRetirar() {
+        return retirar;
+    }
+
+    public void setRetirar(Boolean retirar) {
+        this.retirar = retirar;
+    }
+
     public Pedido() {
+        this.detalle =new ArrayList<>();
     }
 
     public Pedido(Date fecha, List<PedidoDetalle> detalle, Estado estado, String direccionEnvio, String mailContacto, Boolean retirar) {
+        this();
         this.fecha = fecha;
         this.detalle = detalle;
         this.estado = estado;
@@ -29,6 +55,7 @@ public class Pedido {
     }
 
     public Pedido(Date fecha, Estado estado) {
+        this();
         this.fecha = fecha;
         this.estado = estado;
     }
@@ -74,4 +101,23 @@ public class Pedido {
         if(this.detalle != null) this.detalle.remove(det);
     }
 
+    @Override
+    public String toString() {
+        return "Pedido{" +
+                "id=" + id +
+                ", fecha=" + fecha +
+                ", estado=" + estado +
+                ", direccionEnvio='" + direccionEnvio + '\'' +
+                ", mailContacto='" + mailContacto + '\'' +
+                ", retirar=" + retirar +
+                '}';
+    }
+
+    public Double total(){
+        Double total = 0.0;
+        for(PedidoDetalle det: detalle){
+            total+=det.getProducto().getPrecio()*det.getCantidad();
+        }
+        return total;
+    }
 }

@@ -9,6 +9,8 @@ import android.widget.Button;
 public class MainActivity extends AppCompatActivity {
 
     private Button btnNuevoPedido;
+    private Button btnHistorial;
+    private Button btnListaProductos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,8 +20,26 @@ public class MainActivity extends AppCompatActivity {
         btnNuevoPedido.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Intent i = new Intent(MainActivity.this, PedidoActivity.class);
-                // startActivity(i);
+                Intent i = new Intent();
+                startActivity(i);
+            }
+        });
+
+        btnHistorial = (Button) findViewById(R.id.btnHistorialPedidos);
+        btnHistorial.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent();
+                startActivity(i);
+            }
+        });
+
+        btnListaProductos = (Button) findViewById(R.id.btnListaProductos);
+        btnListaProductos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent();
+                startActivity(i);
             }
         });
     }

@@ -21,8 +21,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <Button
-        android:id="@+id/btnMainHistorial"
-        android:text="Historial Pedidos"
+        android:id="@+id/btnListaProductos"
+        android:text="Ver Lista de productos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/btnHistorialPedidos"
+        android:text="Historial de Pedidos"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
