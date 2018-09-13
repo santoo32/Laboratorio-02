@@ -3,7 +3,7 @@ package ar.edu.utn.frsf.dam.isi.laboratorio02.dao;
 import java.util.ArrayList;
 import java.util.List;
 
-import ar.edu.utn.frsf.isi.dam.laboratorio02.modelo.Pedido;
+import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Pedido;
 
 public class PedidoRepository {
 
