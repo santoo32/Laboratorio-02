@@ -17,17 +17,17 @@
         app:layout_constraintTop_toTopOf="parent" />
     <Button
         android:id="@+id/btnMainNuevoPedido"
-        android:text="Nuevo Pedido"
+        android:text="@string/nuevo_pedido"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <Button
         android:id="@+id/btnListaProductos"
-        android:text="Ver Lista de productos"
+        android:text="@string/ver_lista_de_productos"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <Button
         android:id="@+id/btnHistorialPedidos"
-        android:text="Historial de Pedidos"
+        android:text="@string/historial_de_pedidos"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
