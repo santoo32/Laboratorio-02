@@ -5,4 +5,5 @@
     <string name="ver_lista_de_productos">Ver Lista de productos</string>
     <string name="historial_de_pedidos">Historial de Pedidos</string>
     <string name="seleccionar_una_categoria">Seleccionar una categoria</string>
+    <string name="lista_de_productos">Lista de productos</string>
 </resources>

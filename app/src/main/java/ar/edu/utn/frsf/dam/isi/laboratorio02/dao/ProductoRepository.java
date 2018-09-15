@@ -40,8 +40,11 @@ public class ProductoRepository {
     }
 
     public List<Categoria> getCategorias(){
+
         return CATEGORIAS_PRODUCTOS;
     }
+
+
 
     public Producto buscarPorId(Integer id){
         for(Producto p: LISTA_PRODUCTOS){
