@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         btnNuevoPedido.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent();
+                Intent i = new Intent(view.getContext(), Alta_pedidos.class );
                 startActivity(i);
             }
         });

@@ -6,4 +6,11 @@
     <string name="historial_de_pedidos">Historial de Pedidos</string>
     <string name="seleccionar_una_categoria">Seleccionar una categoria</string>
     <string name="lista_de_productos">Lista de productos</string>
+    <string name="datos_del_pedido">Datos del pedido</string>
+    <string name="correo_electronico">Correo Electronico</string>
+    <string name="modo_de_entrega">Modo de entrega</string>
+    <string name="retira_en_local">Retira en local</string>
+    <string name="envio_a_domicilio">Envio a domicilio</string>
+    <string name="direccion_de_envio">Direccion de envio</string>
+    <string name="hora_solicitada_hh_mm">Hora solicitada (hh:mm)</string>
 </resources>
