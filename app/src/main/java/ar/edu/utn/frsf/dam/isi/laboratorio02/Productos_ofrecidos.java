@@ -3,6 +3,7 @@ package ar.edu.utn.frsf.dam.isi.laboratorio02;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
@@ -13,12 +14,14 @@ import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Categoria;
 
 public class Productos_ofrecidos extends AppCompatActivity {
     private Spinner spinnerCat;
+    private ListView listprod;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_productos_ofrecidos);
         spinnerCat = (Spinner) findViewById(R.id.spinner_cat);
+        listprod = (ListView) findViewById(R.id.listprod);
 
 
 
@@ -36,5 +39,9 @@ public class Productos_ofrecidos extends AppCompatActivity {
         ArrayAdapter<String> adaptador_categoria_prod = new ArrayAdapter<>(this , android.R.layout.simple_spinner_item, nombrescat);
         adaptador_categoria_prod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCat.setAdapter(adaptador_categoria_prod);
+
+        //adapter productos por categoria
+        //ArrayAdapter<String> adaptador_prodporcat = new ArrayAdapter<>(this , android.R.layout.simple_spinner_item, nombrescat);
+        //listprod.setAdapter(adaptador_prodporcat);
     }
 }
