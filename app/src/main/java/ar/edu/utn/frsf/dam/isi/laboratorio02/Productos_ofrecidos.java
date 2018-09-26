@@ -3,7 +3,9 @@ package ar.edu.utn.frsf.dam.isi.laboratorio02;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -24,6 +26,8 @@ public class Productos_ofrecidos extends AppCompatActivity {
     private ListView listprod;
     private Button agregar;
     private EditText cantidad_pedir;
+    private Intent i;
+    private Integer ID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,10 +37,11 @@ public class Productos_ofrecidos extends AppCompatActivity {
         agregar = (Button) findViewById(R.id.btnProdAddPedido);
         spinnerCat.setSelection(0);
         listprod = (ListView) findViewById(R.id.listprod);
+        listprod.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
         cantidad_pedir = (EditText) findViewById(R.id.cantidad_pedir);
         final ProductoRepository prodrepos = new ProductoRepository();
-
-        agregar.setEnabled(false);
+        i = new Intent();
+       // agregar.setEnabled(false);
         cantidad_pedir.setEnabled(false);
 
         //--------Analizando si se reciben datos en el Intent---------------------
@@ -58,10 +63,11 @@ public class Productos_ofrecidos extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Categoria cat = prodrepos.getCategorias().get(position);
-                ArrayAdapter<Producto> adaptador_prod = new ArrayAdapter<Producto>(getApplicationContext(), android.R.layout.simple_spinner_item, prodrepos.buscarPorCategoria(cat));
+                ArrayAdapter<Producto> adaptador_prod = new ArrayAdapter<Producto>(getApplicationContext(), android.R.layout.simple_list_item_single_choice, prodrepos.buscarPorCategoria(cat));
                 adaptador_prod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 listprod.setAdapter(adaptador_prod);
                 listprod.setItemChecked(0, true );
+
 
             }
 
@@ -70,13 +76,24 @@ public class Productos_ofrecidos extends AppCompatActivity {
 
             }
         });
+
+
+        listprod.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Producto prod = (Producto) adapterView.getItemAtPosition(i);
+                ID = prod.getId();
+                Log.d("TAGGGGGG", prod.getNombre() );
+            }
+        });
         agregar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), MainActivity.class);
+
                 i.putExtra("cantidad", cantidad_pedir.getText());
 
-                //i.putExtra("idProducto", listprod.getSelectedItem().getClass());
+                i.putExtra("idProducto", ID);
+                
             }
         });
 
