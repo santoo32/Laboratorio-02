@@ -13,4 +13,6 @@
     <string name="envio_a_domicilio">Envio a domicilio</string>
     <string name="direccion_de_envio">Direccion de envio</string>
     <string name="hora_solicitada_hh_mm">Hora solicitada (hh:mm)</string>
+    <string name="cantidad_a_pedir">Cantidad a pedir</string>
+    <string name="agregar">Agregar</string>
 </resources>

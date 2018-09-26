@@ -34,18 +34,18 @@
         android:id="@+id/textView3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Cantidad a pedir" />
+        android:text="@string/cantidad_a_pedir" />
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/cantidad_pedir"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="number" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/btnProdAddPedido"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Agregar" />
+        android:text="@string/agregar" />
 </LinearLayout>
