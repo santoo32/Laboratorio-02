@@ -11,18 +11,20 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingTop="8dp"
         android:text="@string/seleccionar_una_categoria" />
 
     <Spinner
         android:id="@+id/spinner_cat"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:spinnerMode="dropdown"/>
+        android:layout_height="35dp"
+        android:spinnerMode="dropdown" />
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="8dp"
         android:text="@string/lista_de_productos" />
 
     <ListView
@@ -34,6 +36,7 @@
         android:id="@+id/textView3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="16dp"
         android:text="@string/cantidad_a_pedir" />
 
     <EditText
@@ -47,5 +50,6 @@
         android:id="@+id/btnProdAddPedido"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="8dp"
         android:text="@string/agregar" />
 </LinearLayout>

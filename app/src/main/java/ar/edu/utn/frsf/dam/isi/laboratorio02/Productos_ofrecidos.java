@@ -1,5 +1,6 @@
 package ar.edu.utn.frsf.dam.isi.laboratorio02;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -35,6 +36,16 @@ public class Productos_ofrecidos extends AppCompatActivity {
         cantidad_pedir = (EditText) findViewById(R.id.cantidad_pedir);
         final ProductoRepository prodrepos = new ProductoRepository();
 
+        agregar.setEnabled(false);
+        cantidad_pedir.setEnabled(false);
+
+        //--------Analizando si se reciben datos en el Intent---------------------
+        Intent intent = getIntent();
+        if(intent.getStringExtra("NUEVO_PEDIDO") == "1"){
+            agregar.setEnabled(true);
+            cantidad_pedir.setEnabled(true);
+        }
+
 
         //---------Adapter lista de categorias-------------------------------------------------------------------
         List<Categoria> categorias = new ArrayList<>();
@@ -51,6 +62,7 @@ public class Productos_ofrecidos extends AppCompatActivity {
                 adaptador_prod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 listprod.setAdapter(adaptador_prod);
                 listprod.setItemChecked(0, true );
+
             }
 
             @Override
@@ -61,8 +73,10 @@ public class Productos_ofrecidos extends AppCompatActivity {
         agregar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //i.putExtra("cantidad", cantidad_pedir.getText());
-                //i.putExtra("idProducto",idProducto);
+                Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                i.putExtra("cantidad", cantidad_pedir.getText());
+
+                //i.putExtra("idProducto", listprod.getSelectedItem().getClass());
             }
         });
 
