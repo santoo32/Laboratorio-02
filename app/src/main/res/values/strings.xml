@@ -15,4 +15,7 @@
     <string name="hora_solicitada_hh_mm">Hora solicitada (hh:mm)</string>
     <string name="cantidad_a_pedir">Cantidad a pedir</string>
     <string name="agregar">Agregar</string>
+    <string name="pedidos_realizados">Pedidos realizados</string>
+    <string name="nuevo">Nuevo</string>
+    <string name="men">Menú</string>
 </resources>

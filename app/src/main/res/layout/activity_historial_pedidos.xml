@@ -11,11 +11,13 @@
         android:id="@+id/textView9"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Pedidos realizados" />
+        android:text="@string/pedidos_realizados" />
 
     <ListView
+        android:id="@+id/ListView1"
         android:layout_width="match_parent"
         android:layout_height="371dp">
+
 
     </ListView>
 
@@ -25,17 +27,17 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/button_nuevo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Nuevo" />
+            android:text="@string/nuevo" />
 
         <Button
-            android:id="@+id/button3"
+            android:id="@+id/button_menu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Menú" />
+            android:text="@string/men" />
     </LinearLayout>
 </LinearLayout>

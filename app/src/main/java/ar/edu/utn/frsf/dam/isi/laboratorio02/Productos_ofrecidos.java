@@ -63,6 +63,7 @@ public class Productos_ofrecidos extends AppCompatActivity {
         ArrayAdapter<Categoria> adaptador_categoria_prod = new ArrayAdapter<>(this , android.R.layout.simple_spinner_item, categorias);
         adaptador_categoria_prod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCat.setAdapter(adaptador_categoria_prod);
+
         //--------Adapter producto por categoria---------------------------------------------------
         spinnerCat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -72,8 +73,6 @@ public class Productos_ofrecidos extends AppCompatActivity {
                 adaptador_prod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 listprod.setAdapter(adaptador_prod);
                 listprod.setItemChecked(0, true );
-
-
             }
 
             @Override
