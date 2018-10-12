@@ -15,6 +15,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:id="@+id/btnMainNuevoPedido"
         android:text="@string/nuevo_pedido"
@@ -30,5 +31,12 @@
         android:text="@string/historial_de_pedidos"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="367dp"
+        android:contentDescription="@string/todo"
+        app:srcCompat="@drawable/doge" />
 
 </LinearLayout>
