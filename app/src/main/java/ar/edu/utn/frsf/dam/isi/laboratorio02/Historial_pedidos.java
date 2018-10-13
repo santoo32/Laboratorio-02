@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ar.edu.utn.frsf.dam.isi.laboratorio02.CustomAdapters.AdaptadorFilaHistorial;
+import ar.edu.utn.frsf.dam.isi.laboratorio02.dao.PedidoRepository;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Categoria;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Pedido;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.PedidoDetalle;
@@ -27,6 +28,7 @@ public class Historial_pedidos extends AppCompatActivity {
     private Button btnnuevo;
     private Button btnmenu;
     private ListView viewpedido;
+    private PedidoRepository repositorioPedido;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,11 +38,13 @@ public class Historial_pedidos extends AppCompatActivity {
         btnnuevo = (Button) findViewById(R.id.button_nuevo);
         btnmenu = (Button) findViewById(R.id.button_menu);
         viewpedido = (ListView) findViewById(R.id.ListView1);
+        repositorioPedido = new PedidoRepository();
 
+        //Punto 6
+        AdaptadorFilaHistorial customadapter = new AdaptadorFilaHistorial(this, repositorioPedido.getLista());
 
 
         //----------Intents de los botones-------------
-
         btnnuevo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -56,24 +60,18 @@ public class Historial_pedidos extends AppCompatActivity {
             }
         });
 
+        //---------Adapter lista de pedidos-------------------------------------------------------------------
 
-        //Punto 6
-        AdaptadorFilaHistorial customadapter = new AdaptadorFilaHistorial(this, LISTA_PEDIDOS);
+        if(repositorioPedido.getLista()==null){
+            viewpedido.setEnabled(false);
+        }else{
+        ArrayAdapter<Pedido> adaptador_pedidos_prod = new ArrayAdapter<>(this , android.R.layout.simple_spinner_item, repositorioPedido.getLista());
+        adaptador_pedidos_prod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        viewpedido.setAdapter(adaptador_pedidos_prod);}
 
 
 
-        //-------------Listener ListView------------------------
-        /*viewpedido.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
 
-                Toast.makeText(getApplicationContext(), "No implementado aun", Toast.LENGTH_LONG).show();
-
-                Log.v("long clicked","pos: " + pos);
-
-                return true;
-            }
-        });*/
 
     }
 }

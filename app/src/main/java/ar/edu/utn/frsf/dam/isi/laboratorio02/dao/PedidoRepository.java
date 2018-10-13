@@ -30,5 +30,8 @@ public class PedidoRepository {
         return null;
     }
 
-
+    public PedidoRepository() {
+        LISTA_PEDIDOS = new ArrayList<>();
+        GENERADOR_ID_PEDIDO = 0;
+    }
 }

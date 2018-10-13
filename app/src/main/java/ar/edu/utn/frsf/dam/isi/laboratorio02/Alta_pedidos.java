@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -22,6 +23,7 @@ import ar.edu.utn.frsf.dam.isi.laboratorio02.dao.PedidoRepository;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.dao.ProductoRepository;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Pedido;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.PedidoDetalle;
+import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Producto;
 
 import static ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Pedido.Estado.EN_PREPARACION;
 import static ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Pedido.Estado.REALIZADO;
@@ -35,13 +37,12 @@ public class Alta_pedidos extends AppCompatActivity{
     private RadioButton retiro_local;
     private RadioButton envio_domicilio;
     private EditText domicilio;
-    private Button agregar_pedido;
+    private Button agregar_producto;
     private ListView lista_detalle;
     private TextView total;
     private Button hacerPedido;
     private Button volver;
-
-    ArrayAdapter<PedidoDetalle> adapter;
+    public  ArrayAdapter<PedidoDetalle> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +53,7 @@ public class Alta_pedidos extends AppCompatActivity{
         envio_domicilio = (RadioButton) findViewById(R.id.radioButton2);
         domicilio = (EditText)findViewById(R.id.editText3);
         envio_domicilio.setChecked(true);
-        agregar_pedido = (Button) findViewById(R.id.button5);
+        agregar_producto = (Button) findViewById(R.id.button5);
         lista_detalle = (ListView)  findViewById(R.id.lista_detalle);
         detalle = new ArrayList<>();
         total = (TextView) findViewById(R.id.textView12);
@@ -66,9 +67,14 @@ public class Alta_pedidos extends AppCompatActivity{
 
 
         //PUNTO E
-         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_single_choice, detalle);
-        //PUNTO F
-        lista_detalle.setAdapter(adapter);
+        if(detalle==null){
+            lista_detalle.setEnabled(false);
+        }else {
+            adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_single_choice, detalle);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            lista_detalle.setAdapter(adapter);
+        }
+
 
 
         envio_domicilio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -83,7 +89,7 @@ public class Alta_pedidos extends AppCompatActivity{
             }
         });
 
-        agregar_pedido.setOnClickListener(new View.OnClickListener() {
+        agregar_producto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), Productos_ofrecidos.class);
@@ -104,6 +110,35 @@ public class Alta_pedidos extends AppCompatActivity{
                 asignarDatos();//fata implementar
                 //punto i.iv
                 repositorioPedido.guardarPedido(unPedido);
+
+
+                //Etapa 3 parte 1
+                /*Runnable r = new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.currentThread().sleep(10000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        // buscar pedidos no aceptados y aceptarlos automáticamente
+                        List<Pedido> lista = repositorioPedido.getLista();
+                        for (Pedido p : lista) {
+                            if (p.getEstado().equals(Pedido.Estado.REALIZADO))
+                                p.setEstado(Pedido.Estado.ACEPTADO);
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(Alta_pedidos.this, "Informacion de pedidos actualizada!", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                };
+                Thread unHilo = new Thread();
+                unHilo.start();
+                */
+
                 finish();
             }
         });
@@ -129,8 +164,6 @@ public class Alta_pedidos extends AppCompatActivity{
        //punto h
 
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 777){
-            if(resultCode == Activity.RESULT_OK){
                 Bundle extras = data.getExtras();
                 Integer ID = (Integer) extras.get("idProducto");
                 Integer cantidad = (Integer) extras.get("cantidad");
@@ -145,8 +178,8 @@ public class Alta_pedidos extends AppCompatActivity{
                 //item v)
                 adapter.setNotifyOnChange(true);
 
-            }
-        }
+
+
 
     }
 
