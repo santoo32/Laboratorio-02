@@ -13,12 +13,15 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import ar.edu.utn.frsf.dam.isi.laboratorio02.dao.PedidoRepository;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.dao.ProductoRepository;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Pedido;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.PedidoDetalle;
+
+import static ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Pedido.Estado.EN_PREPARACION;
 
 public class Alta_pedidos extends AppCompatActivity{
 
@@ -45,11 +48,16 @@ public class Alta_pedidos extends AppCompatActivity{
         lista_detalle = (ListView)  findViewById(R.id.lista_detalle);
         detalle = new ArrayList<>();
 
+        Calendar c = Calendar.getInstance();
+        //Inicializar variables
+        unPedido = new Pedido(c.getTime(), EN_PREPARACION);
+
 
         //PUNTO E
         ArrayAdapter<PedidoDetalle> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_single_choice, detalle);
         //PUNTO F
         lista_detalle.setAdapter(adapter);
+
 
         envio_domicilio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -72,12 +80,20 @@ public class Alta_pedidos extends AppCompatActivity{
             }
         });
 
+        Bundle extras = data.getExtras();
+        Integer ID = (Integer) extras.get("idProducto");
+        Integer cantidad = (Integer) extras.get("cantidad");
+        RepositorioProducto = new ProductoRepository();
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+
+        PedidoDetalle d = new PedidoDetalle(cantidad, repositorioProducto.buscarPorId(ID));
+        detalle.add(d);
     //punto h
     }
 }

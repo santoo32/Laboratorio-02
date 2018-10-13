@@ -54,13 +54,9 @@ public class Historial_pedidos extends AppCompatActivity {
             }
         });
 
-        //----------------Adapter ListView
-        ArrayList<String> testeo = new ArrayList<>();
-        testeo.add("Puto el que lee");
-        testeo.add("Y seguis leyendo");
+        //AdaptadorFilaHistorial customadapter = new AdaptadorFilaHistorial(this, viewpedido);
 
-        AdaptadorFilaHistorial whatever = new AdaptadorFilaHistorial(testeo, this);
-        viewpedido.setAdapter(whatever);
+
 
         //-------------Listener ListView------------------------
         /*viewpedido.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {

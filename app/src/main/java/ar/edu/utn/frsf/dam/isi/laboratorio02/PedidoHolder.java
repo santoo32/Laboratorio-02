@@ -5,11 +5,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class PedidoHolder {
-    public TextView tvMailPedido;
-    public TextView tvHoraEntrega;
-    public TextView tvCantidadItems;
-    public TextView tvPrecio;
+    public TextView contacto;
+    public TextView fecha_entrega;
+    public TextView items;
+    public TextView pagar;
     public TextView estado;
-    public ImageView tipoEntrega;
+    public ImageView imageview;
     public Button btnCancelar;
+    public Button btnDetalles;
 }
