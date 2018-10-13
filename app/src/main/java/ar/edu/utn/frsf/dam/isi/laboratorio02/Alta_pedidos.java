@@ -1,5 +1,6 @@
 package ar.edu.utn.frsf.dam.isi.laboratorio02;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -38,6 +39,8 @@ public class Alta_pedidos extends AppCompatActivity{
     private ListView lista_detalle;
     private TextView total;
     private Button hacerPedido;
+    private Button volver;
+
     ArrayAdapter<PedidoDetalle> adapter;
 
     @Override
@@ -101,10 +104,16 @@ public class Alta_pedidos extends AppCompatActivity{
                 asignarDatos();//fata implementar
                 //punto i.iv
                 repositorioPedido.guardarPedido(unPedido);
-
+                finish();
             }
         });
 
+        volver.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
 
 
@@ -120,20 +129,24 @@ public class Alta_pedidos extends AppCompatActivity{
        //punto h
 
         super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 777){
+            if(resultCode == Activity.RESULT_OK){
+                Bundle extras = data.getExtras();
+                Integer ID = (Integer) extras.get("idProducto");
+                Integer cantidad = (Integer) extras.get("cantidad");
 
-        Bundle extras = data.getExtras();
-        Integer ID = (Integer) extras.get("idProducto");
-        Integer cantidad = (Integer) extras.get("cantidad");
+                PedidoDetalle d = new PedidoDetalle(cantidad, repositorioProducto.buscarPorId(ID));
+                detalle.add(d);
 
-        PedidoDetalle d = new PedidoDetalle(cantidad, repositorioProducto.buscarPorId(ID));
-        detalle.add(d);
+                //item iv)
+                Double costo = calcularCosto(detalle);
+                total.setText(" Total Pedido: " + costo.toString());
 
-        //item iv)
-        Double costo = calcularCosto(detalle);
-        total.setText(" Total Pedido: " + costo.toString());
+                //item v)
+                adapter.setNotifyOnChange(true);
 
-        //item v)
-        adapter.setNotifyOnChange(true);
+            }
+        }
 
     }
 

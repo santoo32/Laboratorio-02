@@ -34,8 +34,8 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="367dp"
+        android:layout_width="272dp"
+        android:layout_height="252dp"
         android:contentDescription="@string/todo"
         app:srcCompat="@drawable/doge" />
 

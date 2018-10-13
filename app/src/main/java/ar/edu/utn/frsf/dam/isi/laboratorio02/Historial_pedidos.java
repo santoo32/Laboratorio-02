@@ -20,6 +20,8 @@ import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Categoria;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Pedido;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.PedidoDetalle;
 
+import static ar.edu.utn.frsf.dam.isi.laboratorio02.dao.PedidoRepository.LISTA_PEDIDOS;
+
 public class Historial_pedidos extends AppCompatActivity {
 
     private Button btnnuevo;
@@ -54,7 +56,9 @@ public class Historial_pedidos extends AppCompatActivity {
             }
         });
 
-        //AdaptadorFilaHistorial customadapter = new AdaptadorFilaHistorial(this, viewpedido);
+
+        //Punto 6
+        AdaptadorFilaHistorial customadapter = new AdaptadorFilaHistorial(this, LISTA_PEDIDOS);
 
 
 

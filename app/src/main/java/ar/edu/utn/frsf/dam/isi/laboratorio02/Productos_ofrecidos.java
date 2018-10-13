@@ -1,5 +1,6 @@
 package ar.edu.utn.frsf.dam.isi.laboratorio02;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -96,6 +97,7 @@ public class Productos_ofrecidos extends AppCompatActivity {
 
                 i.putExtra("cantidad", cantidad_pedir.getText());
                 i.putExtra("idProducto", ID);
+                setResult(Activity.RESULT_OK,i);
                 finish();
             }
         });

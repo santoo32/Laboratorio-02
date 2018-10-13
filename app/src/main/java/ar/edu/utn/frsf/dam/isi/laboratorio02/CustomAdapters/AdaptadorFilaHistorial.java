@@ -1,6 +1,5 @@
 package ar.edu.utn.frsf.dam.isi.laboratorio02.CustomAdapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -9,19 +8,15 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ar.edu.utn.frsf.dam.isi.laboratorio02.PedidoHolder;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.R;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Pedido;
-import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Producto;
 
 public class AdaptadorFilaHistorial extends ArrayAdapter<Pedido> implements View.OnClickListener{
     private Context ctx;
@@ -88,8 +83,13 @@ public class AdaptadorFilaHistorial extends ArrayAdapter<Pedido> implements View
         //viewHolder.pagar = (TextView) convertView.findViewById(R.id.textView15);
 
 
+
         if(dataModel.getRetirar()==true){
-            //viewHolder.imageview.setImageDrawable();
+            viewHolder.imageview.setImageResource(R.drawable.truck);
+        }
+        else{
+            viewHolder.imageview.setImageResource(R.drawable.knifeandfork);
+
         }
 
 
