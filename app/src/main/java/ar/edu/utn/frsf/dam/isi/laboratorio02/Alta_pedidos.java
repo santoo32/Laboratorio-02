@@ -11,6 +11,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioButton;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -22,6 +23,7 @@ import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Pedido;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.PedidoDetalle;
 
 import static ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Pedido.Estado.EN_PREPARACION;
+import static ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Pedido.Estado.REALIZADO;
 
 public class Alta_pedidos extends AppCompatActivity{
 
@@ -34,6 +36,9 @@ public class Alta_pedidos extends AppCompatActivity{
     private EditText domicilio;
     private Button agregar_pedido;
     private ListView lista_detalle;
+    private TextView total;
+    private Button hacerPedido;
+    ArrayAdapter<PedidoDetalle> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +52,10 @@ public class Alta_pedidos extends AppCompatActivity{
         agregar_pedido = (Button) findViewById(R.id.button5);
         lista_detalle = (ListView)  findViewById(R.id.lista_detalle);
         detalle = new ArrayList<>();
+        total = (TextView) findViewById(R.id.textView12);
+        hacerPedido = (Button) findViewById(R.id.button7);
+        repositorioProducto = new ProductoRepository();
+        repositorioPedido = new PedidoRepository();
 
         Calendar c = Calendar.getInstance();
         //Inicializar variables
@@ -54,7 +63,7 @@ public class Alta_pedidos extends AppCompatActivity{
 
 
         //PUNTO E
-        ArrayAdapter<PedidoDetalle> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_single_choice, detalle);
+         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_single_choice, detalle);
         //PUNTO F
         lista_detalle.setAdapter(adapter);
 
@@ -80,20 +89,69 @@ public class Alta_pedidos extends AppCompatActivity{
             }
         });
 
-        Bundle extras = data.getExtras();
-        Integer ID = (Integer) extras.get("idProducto");
-        Integer cantidad = (Integer) extras.get("cantidad");
-        RepositorioProducto = new ProductoRepository();
+        hacerPedido.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //punto i
+                validarDatos();//falta implementar
+                //punto i.ii
+                unPedido.setEstado(REALIZADO);
+                //punto i.iii
+                unPedido.setDetalle(detalle);
+                asignarDatos();//fata implementar
+                //punto i.iv
+                repositorioPedido.guardarPedido(unPedido);
+
+            }
+        });
+
+
+
+
+    }
+
+    private void validarDatos() {
+
 
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+       //punto h
+
         super.onActivityResult(requestCode, resultCode, data);
 
+        Bundle extras = data.getExtras();
+        Integer ID = (Integer) extras.get("idProducto");
+        Integer cantidad = (Integer) extras.get("cantidad");
 
         PedidoDetalle d = new PedidoDetalle(cantidad, repositorioProducto.buscarPorId(ID));
         detalle.add(d);
-    //punto h
+
+        //item iv)
+        Double costo = calcularCosto(detalle);
+        total.setText(" Total Pedido: " + costo.toString());
+
+        //item v)
+        adapter.setNotifyOnChange(true);
+
+    }
+
+    private void asignarDatos (){
+        //implementar
+    }
+
+    private Double calcularCosto(List<PedidoDetalle> detalle) {
+
+        Double costo = 0.0;
+
+        for(int i = 0; i < detalle.size(); i++){
+
+            costo += detalle.get(i).getProducto().getPrecio() * detalle.get(i).getCantidad();
+
+        }
+
+
+        return costo;
     }
 }
