@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -11,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +44,8 @@ public class Historial_pedidos extends AppCompatActivity {
         viewpedido = (ListView) findViewById(R.id.ListView1);
         repositorioPedido = new PedidoRepository();
         viewpedido.setEnabled(true);
-        //Punto 6
-        //AdaptadorFilaHistorial customadapter = new AdaptadorFilaHistorial(this, repositorioPedido.getLista());
+
+
 
 
         //----------Intents de los botones-------------
@@ -66,15 +69,34 @@ public class Historial_pedidos extends AppCompatActivity {
         if(repositorioPedido.getLista()==null){
             viewpedido.setEnabled(false);
         }else{
+            viewpedido.setEnabled(true);
             AdaptadorFilaHistorial customadapter = new AdaptadorFilaHistorial(this, repositorioPedido.getLista());
             //ArrayAdapter<Pedido> adaptador_pedidos_prod = new ArrayAdapter<>(this , android.R.layout.simple_spinner_item, repositorioPedido.getLista());
             //adaptador_pedidos_prod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             customadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            viewpedido.setAdapter(customadapter);}
+            viewpedido.setAdapter(customadapter);
+
+        }
 
 
 
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
 
 
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

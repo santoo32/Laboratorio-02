@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import ar.edu.utn.frsf.dam.isi.laboratorio02.dao.PedidoRepository;
@@ -39,6 +40,8 @@ public class Alta_pedidos extends AppCompatActivity{
     private RadioButton retiro_local;
     private RadioButton envio_domicilio;
     private EditText domicilio;
+    private EditText mail_contacto;
+    private EditText hora_entrega;
     private Button agregar_producto;
     private ListView lista_detalle;
     private TextView total;
@@ -55,6 +58,8 @@ public class Alta_pedidos extends AppCompatActivity{
 
 
         retiro_local = (RadioButton) findViewById(R.id.radioButton);
+        mail_contacto = (EditText) findViewById(R.id.editText2);
+        hora_entrega = (EditText) findViewById(R.id.editText4);
         envio_domicilio = (RadioButton) findViewById(R.id.radioButton2);
         domicilio = (EditText)findViewById(R.id.editText3);
         envio_domicilio.setChecked(true);
@@ -68,22 +73,12 @@ public class Alta_pedidos extends AppCompatActivity{
         repositorioPedido = new PedidoRepository();
         eliminar_prod = (Button) findViewById(R.id.button6);
 
-        Calendar c = Calendar.getInstance();
+
+
         //Inicializar variables
-        unPedido = new Pedido(c.getTime(), EN_PREPARACION);
+        //Calendar c = Calendar.getInstance();
+        //unPedido = new Pedido(c.getTime(), EN_PREPARACION);
         lista_detalle.setEnabled(true);
-
-        //PUNTO E
-        /*if(detalle==null){
-            lista_detalle.setEnabled(false);
-        }else {
-            lista_detalle.setEnabled(true);
-            adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_single_choice, detalle);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            lista_detalle.setAdapter(adapter);
-        }*/
-
-
 
         envio_domicilio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -130,16 +125,14 @@ public class Alta_pedidos extends AppCompatActivity{
         hacerPedido.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Calendar c = Calendar.getInstance();
                 //punto i
-                validarDatos();//falta implementar
-                //punto i.ii
-                unPedido.setEstado(REALIZADO);
-                //punto i.iii
-                unPedido.setDetalle(detalle);
-                asignarDatos();//fata implementar
+                //validarDatos(); falta implementar
+                Pedido p1 = new Pedido(c.getTime(), detalle, EN_PREPARACION, domicilio.getText().toString(), mail_contacto.getText().toString(), envio_domicilio.isChecked());
+                //asignarDatos(); fata implementar
                 //punto i.iv
-                repositorioPedido.guardarPedido(unPedido);
-
+                repositorioPedido.guardarPedido(p1);
+                List debugg = repositorioPedido.LISTA_PEDIDOS;
 
                 //Etapa 3 parte 1
                 /*Runnable r = new Runnable() {
@@ -221,7 +214,14 @@ public class Alta_pedidos extends AppCompatActivity{
     }
 
     private void asignarDatos (){
-        //implementar
+
+        //PARA MI ESTO NO ES NECESARIO PORQUE LO PODEMOS PASAR POR CONSTRUCTOR
+        unPedido.setDireccionEnvio(envio_domicilio.getText().toString());
+        //punto i.ii
+        unPedido.setEstado(REALIZADO);
+        //punto i.iii
+        unPedido.setDetalle(detalle);
+        unPedido.setMailContacto(mail_contacto.getText().toString());
     }
 
     private Double calcularCosto(List<PedidoDetalle> detalle) {
