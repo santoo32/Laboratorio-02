@@ -36,7 +36,14 @@
         android:id="@+id/imageView"
         android:layout_width="272dp"
         android:layout_height="252dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="50dp"
         android:contentDescription="@string/todo"
-        app:srcCompat="@drawable/doge" />
+        app:srcCompat="@drawable/logo" />
+
+    <TextView
+        android:id="@+id/debugger"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
