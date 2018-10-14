@@ -35,6 +35,7 @@ public class Productos_ofrecidos extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_productos_ofrecidos);
+
         spinnerCat = (Spinner) findViewById(R.id.spinner_cat);
         agregar = (Button) findViewById(R.id.btnProdAddPedido);
         spinnerCat.setSelection(0);
@@ -94,8 +95,8 @@ public class Productos_ofrecidos extends AppCompatActivity {
         agregar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                i.putExtra("cantidad", cantidad_pedir.getText());
+                int cant = Integer.parseInt(cantidad_pedir.getText().toString());
+                i.putExtra("cantidad", cant);
                 i.putExtra("idProducto", ID);
                 setResult(Activity.RESULT_OK,i);
                 finish();

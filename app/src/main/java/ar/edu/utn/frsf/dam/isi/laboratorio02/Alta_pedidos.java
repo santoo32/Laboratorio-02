@@ -42,7 +42,7 @@ public class Alta_pedidos extends AppCompatActivity{
     private TextView total;
     private Button hacerPedido;
     private Button volver;
-    public  ArrayAdapter<PedidoDetalle> adapter;
+    private  ArrayAdapter<PedidoDetalle> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,18 +58,20 @@ public class Alta_pedidos extends AppCompatActivity{
         detalle = new ArrayList<>();
         total = (TextView) findViewById(R.id.textView12);
         hacerPedido = (Button) findViewById(R.id.button7);
+        volver = (Button) findViewById(R.id.button8);
         repositorioProducto = new ProductoRepository();
         repositorioPedido = new PedidoRepository();
 
         Calendar c = Calendar.getInstance();
         //Inicializar variables
         unPedido = new Pedido(c.getTime(), EN_PREPARACION);
-
+        lista_detalle.setEnabled(true);
 
         //PUNTO E
         if(detalle==null){
             lista_detalle.setEnabled(false);
         }else {
+            lista_detalle.setEnabled(true);
             adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_single_choice, detalle);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             lista_detalle.setAdapter(adapter);

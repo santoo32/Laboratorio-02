@@ -39,4 +39,9 @@
         android:contentDescription="@string/todo"
         app:srcCompat="@drawable/doge" />
 
+    <TextView
+        android:id="@+id/debugger"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
 </LinearLayout>

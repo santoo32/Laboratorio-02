@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -29,11 +31,13 @@ public class MainActivity extends AppCompatActivity {
     private PedidoRepository repositorioPedido;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         btnNuevoPedido = (Button) findViewById(R.id.btnMainNuevoPedido);
+
 
         btnNuevoPedido.setOnClickListener(new View.OnClickListener() {
             @Override

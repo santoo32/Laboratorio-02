@@ -39,9 +39,9 @@ public class Historial_pedidos extends AppCompatActivity {
         btnmenu = (Button) findViewById(R.id.button_menu);
         viewpedido = (ListView) findViewById(R.id.ListView1);
         repositorioPedido = new PedidoRepository();
-
+        viewpedido.setEnabled(true);
         //Punto 6
-        AdaptadorFilaHistorial customadapter = new AdaptadorFilaHistorial(this, repositorioPedido.getLista());
+        //AdaptadorFilaHistorial customadapter = new AdaptadorFilaHistorial(this, repositorioPedido.getLista());
 
 
         //----------Intents de los botones-------------
@@ -65,9 +65,11 @@ public class Historial_pedidos extends AppCompatActivity {
         if(repositorioPedido.getLista()==null){
             viewpedido.setEnabled(false);
         }else{
-        ArrayAdapter<Pedido> adaptador_pedidos_prod = new ArrayAdapter<>(this , android.R.layout.simple_spinner_item, repositorioPedido.getLista());
-        adaptador_pedidos_prod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        viewpedido.setAdapter(adaptador_pedidos_prod);}
+            AdaptadorFilaHistorial customadapter = new AdaptadorFilaHistorial(this, repositorioPedido.getLista());
+            //ArrayAdapter<Pedido> adaptador_pedidos_prod = new ArrayAdapter<>(this , android.R.layout.simple_spinner_item, repositorioPedido.getLista());
+            //adaptador_pedidos_prod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            customadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            viewpedido.setAdapter(customadapter);}
 
 
 
