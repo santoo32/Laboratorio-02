@@ -35,6 +35,7 @@ public class Historial_pedidos extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_historial_pedidos);
 
+
         btnnuevo = (Button) findViewById(R.id.button_nuevo);
         btnmenu = (Button) findViewById(R.id.button_menu);
         viewpedido = (ListView) findViewById(R.id.ListView1);

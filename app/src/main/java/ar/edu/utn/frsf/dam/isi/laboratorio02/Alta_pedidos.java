@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -43,11 +45,14 @@ public class Alta_pedidos extends AppCompatActivity{
     private Button hacerPedido;
     private Button volver;
     private  ArrayAdapter<PedidoDetalle> adapter;
+    private Button eliminar_prod;
+    private Integer ID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alta_pedidos);
+
 
         retiro_local = (RadioButton) findViewById(R.id.radioButton);
         envio_domicilio = (RadioButton) findViewById(R.id.radioButton2);
@@ -61,6 +66,7 @@ public class Alta_pedidos extends AppCompatActivity{
         volver = (Button) findViewById(R.id.button8);
         repositorioProducto = new ProductoRepository();
         repositorioPedido = new PedidoRepository();
+        eliminar_prod = (Button) findViewById(R.id.button6);
 
         Calendar c = Calendar.getInstance();
         //Inicializar variables
@@ -68,14 +74,14 @@ public class Alta_pedidos extends AppCompatActivity{
         lista_detalle.setEnabled(true);
 
         //PUNTO E
-        if(detalle==null){
+        /*if(detalle==null){
             lista_detalle.setEnabled(false);
         }else {
             lista_detalle.setEnabled(true);
             adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_single_choice, detalle);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             lista_detalle.setAdapter(adapter);
-        }
+        }*/
 
 
 
@@ -100,6 +106,27 @@ public class Alta_pedidos extends AppCompatActivity{
             }
         });
 
+
+
+        lista_detalle.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                PedidoDetalle eliminar = (PedidoDetalle) adapterView.getItemAtPosition(i);
+                ID = eliminar.getId();
+                adapter.remove((PedidoDetalle) adapterView.getItemAtPosition(i));
+                adapter.notifyDataSetChanged();
+                Double costo = calcularCosto(detalle);
+                total.setText(" Total Pedido: " + costo.toString());
+            }
+        });
+
+        eliminar_prod.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(Alta_pedidos.this, "Toque el item en la lista que desea eliminar",
+                        Toast.LENGTH_LONG).show();
+            }
+        });
         hacerPedido.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -176,7 +203,15 @@ public class Alta_pedidos extends AppCompatActivity{
                 //item iv)
                 Double costo = calcularCosto(detalle);
                 total.setText(" Total Pedido: " + costo.toString());
-
+                if(detalle==null){
+                    lista_detalle.setEnabled(false);
+                 }else {
+                    lista_detalle.setEnabled(true);
+                    adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_single_choice, detalle);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    lista_detalle.setAdapter(adapter);
+                    lista_detalle.setItemChecked(0, true );
+                }
                 //item v)
                 adapter.setNotifyOnChange(true);
 

@@ -36,6 +36,7 @@ public class Productos_ofrecidos extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_productos_ofrecidos);
 
+
         spinnerCat = (Spinner) findViewById(R.id.spinner_cat);
         agregar = (Button) findViewById(R.id.btnProdAddPedido);
         spinnerCat.setSelection(0);
