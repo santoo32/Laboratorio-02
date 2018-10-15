@@ -128,14 +128,13 @@ public class Alta_pedidos extends AppCompatActivity{
                 Calendar c = Calendar.getInstance();
                 //punto i
                 //validarDatos(); falta implementar
-                Pedido p1 = new Pedido(c.getTime(), detalle, EN_PREPARACION, domicilio.getText().toString(), mail_contacto.getText().toString(), envio_domicilio.isChecked());
+                Pedido p1 = new Pedido(c.getTime(), detalle, REALIZADO, domicilio.getText().toString(), mail_contacto.getText().toString(), envio_domicilio.isChecked());
                 //asignarDatos(); fata implementar
                 //punto i.iv
                 repositorioPedido.guardarPedido(p1);
-                List debugg = repositorioPedido.LISTA_PEDIDOS;
 
                 //Etapa 3 parte 1
-                /*Runnable r = new Runnable() {
+                Runnable r = new Runnable() {
                     @Override
                     public void run() {
                         try {
@@ -158,8 +157,8 @@ public class Alta_pedidos extends AppCompatActivity{
                     }
                 };
                 Thread unHilo = new Thread();
-                unHilo.start();
-                */
+                new Thread(r , ("unHilo")).start();
+
 
                 finish();
             }
