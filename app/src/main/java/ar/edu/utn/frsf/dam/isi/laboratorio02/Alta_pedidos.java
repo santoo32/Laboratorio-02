@@ -127,9 +127,9 @@ public class Alta_pedidos extends AppCompatActivity{
             public void onClick(View view) {
                 Calendar c = Calendar.getInstance();
                 //punto i
-                //validarDatos(); falta implementar
+                //validarDatos();
                 Pedido p1 = new Pedido(c.getTime(), detalle, REALIZADO, domicilio.getText().toString(), mail_contacto.getText().toString(), envio_domicilio.isChecked());
-                //asignarDatos(); fata implementar
+
                 //punto i.iv
                 repositorioPedido.guardarPedido(p1);
 
@@ -158,6 +158,7 @@ public class Alta_pedidos extends AppCompatActivity{
                 };
                 Thread unHilo = new Thread();
                 new Thread(r , ("unHilo")).start();
+
 
 
                 finish();
