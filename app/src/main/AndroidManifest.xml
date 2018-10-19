@@ -27,10 +27,11 @@
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="<<paquete>>>.ESTADO_ACEPTADO"/>
-                <action android:name="<<paquete>>>.ESTADO_CANCELADO"/>
-                <action android:name="<<paquete>>>.ESTADO_EN_PREPARACION"/>
-                <action android:name="<<paquete>>>.ESTADO_LISTO"/> </intent-filter>
+                <action android:name="modelo.Pedido.ESTADO_ACEPTADO"/>
+                <action android:name="modelo.Pedido.ESTADO_CANCELADO"/>
+                <action android:name="modelo.Pedido.ESTADO_EN_PREPARACION"/>
+                <action android:name="modelo.Pedido.ESTADO_LISTO"/>
+            </intent-filter>
         </receiver>
     </application>
 

@@ -1,7 +1,9 @@
 package ar.edu.utn.frsf.dam.isi.laboratorio02;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,6 +24,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import ar.edu.utn.frsf.dam.isi.laboratorio02.CustomAdapters.EstadoPedidoReceiver;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.dao.PedidoRepository;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.dao.ProductoRepository;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Pedido;
@@ -50,6 +53,10 @@ public class Alta_pedidos extends AppCompatActivity{
     private  ArrayAdapter<PedidoDetalle> adapter;
     private Button eliminar_prod;
     private Integer ID;
+    private BroadcastReceiver br;
+    private IntentFilter filtro;
+    private Pedido p1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,8 +125,7 @@ public class Alta_pedidos extends AppCompatActivity{
         eliminar_prod.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(Alta_pedidos.this, "Toque el item en la lista que desea eliminar",
-                        Toast.LENGTH_LONG).show();
+                Toast.makeText(Alta_pedidos.this, "Toque el item en la lista que desea eliminar", Toast.LENGTH_LONG).show();
             }
         });
         hacerPedido.setOnClickListener(new View.OnClickListener() {
@@ -128,10 +134,19 @@ public class Alta_pedidos extends AppCompatActivity{
                 Calendar c = Calendar.getInstance();
                 //punto i
                 //validarDatos();
-                Pedido p1 = new Pedido(c.getTime(), detalle, REALIZADO, domicilio.getText().toString(), mail_contacto.getText().toString(), envio_domicilio.isChecked());
+                p1 = new Pedido(c.getTime(), detalle, REALIZADO, domicilio.getText().toString(), mail_contacto.getText().toString(), envio_domicilio.isChecked());
 
                 //punto i.iv
                 repositorioPedido.guardarPedido(p1);
+
+                //Etapa 3 parte 2
+                br = new EstadoPedidoReceiver();
+                filtro = new IntentFilter();
+                filtro.addAction(EstadoPedidoReceiver.ESTADO_ACEPTADO);
+                getApplication().getApplicationContext().registerReceiver(br, filtro);
+                final Intent i = new Intent();
+
+
 
                 //Etapa 3 parte 1
                 Runnable r = new Runnable() {
@@ -142,18 +157,28 @@ public class Alta_pedidos extends AppCompatActivity{
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
+
                         // buscar pedidos no aceptados y aceptarlos automáticamente
                         List<Pedido> lista = repositorioPedido.getLista();
                         for (Pedido p : lista) {
                             if (p.getEstado().equals(Pedido.Estado.REALIZADO))
                                 p.setEstado(Pedido.Estado.ACEPTADO);
                         }
+
+                        i.putExtra("idPedido",p1.getId());
+                        i.setAction(EstadoPedidoReceiver.ESTADO_ACEPTADO);
+                        sendBroadcast(i);
+
+
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(Alta_pedidos.this, "Informacion de pedidos actualizada!", Toast.LENGTH_LONG).show();
+                                //Toast.makeText(Alta_pedidos.this, "Informacion de pedidos actualizada!", Toast.LENGTH_SHORT).show();
                             }
                         });
+
+
+
                     }
                 };
                 Thread unHilo = new Thread();

@@ -1,6 +1,7 @@
 package ar.edu.utn.frsf.dam.isi.laboratorio02.CustomAdapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,11 +12,14 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
+import ar.edu.utn.frsf.dam.isi.laboratorio02.Alta_pedidos;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.Historial_pedidos;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.PedidoHolder;
+import ar.edu.utn.frsf.dam.isi.laboratorio02.Productos_ofrecidos;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.R;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Pedido;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.PedidoDetalle;
@@ -56,6 +60,26 @@ public class AdaptadorFilaHistorial extends ArrayAdapter<Pedido> implements View
             viewHolder.btnCancelar = (Button) convertView.findViewById(R.id.delete_btn);
             viewHolder.btnDetalles = (Button) convertView.findViewById(R.id.menu_btn);
 
+            viewHolder.btnCancelar.setOnClickListener (new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int indice = (int) v.getTag();
+                    Pedido pedidoSeleccionado = datos.get(indice);
+                    if( pedidoSeleccionado.getEstado().equals(Pedido.Estado.REALIZADO)|| pedidoSeleccionado.getEstado().equals(Pedido.Estado.ACEPTADO)|| pedidoSeleccionado.getEstado().equals(Pedido.Estado.EN_PREPARACION)){
+                        pedidoSeleccionado.setEstado(Pedido.Estado.CANCELADO);
+                        AdaptadorFilaHistorial.this.notifyDataSetChanged();
+                    }
+                    return;
+                }
+            });
+
+
+            viewHolder.btnDetalles.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(ctx, "No implementado aun", Toast.LENGTH_LONG).show();
+                }
+            });
             result=convertView;
 
             convertView.setTag(viewHolder);
@@ -89,17 +113,6 @@ public class AdaptadorFilaHistorial extends ArrayAdapter<Pedido> implements View
 
         }
 
-        new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int indice = (int) v.getTag();
-                Pedido pedidoSeleccionado = datos.get(indice);
-                if( pedidoSeleccionado.getEstado().equals(Pedido.Estado.REALIZADO)|| pedidoSeleccionado.getEstado().equals(Pedido.Estado.ACEPTADO)|| pedidoSeleccionado.getEstado().equals(Pedido.Estado.EN_PREPARACION)){
-                    pedidoSeleccionado.setEstado(Pedido.Estado.CANCELADO);
-                    AdaptadorFilaHistorial.this.notifyDataSetChanged();
-                }
-                return;
-            }};
 
 
 
