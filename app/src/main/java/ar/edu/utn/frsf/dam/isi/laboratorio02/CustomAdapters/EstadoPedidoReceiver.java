@@ -20,6 +20,8 @@ import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Pedido;
 public class EstadoPedidoReceiver extends BroadcastReceiver {
 
     public  static final String ESTADO_ACEPTADO="frsf.dam.isi.laboratorio02.EVENTO_01_MSG";
+    public  static final String ESTADO_EN_PREPARACION="frsf.dam.isi.laboratorio02.EVENTO_02_MSG";
+
     private PedidoRepository p1;
 
     @Override
