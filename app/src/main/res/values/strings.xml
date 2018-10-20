@@ -26,4 +26,5 @@
 
     <string name="canal_estado_nombre">canal_estado_nombre</string>
     <string name="canal_estado_descr">canal_estado_descr</string>
+    <string name="preparar_pedidos">Preparar Pedidos</string>
 </resources>

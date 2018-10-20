@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnNuevoPedido;
     private Button btnHistorial;
     private Button btnListaProductos;
+    private Button btnPrepararPedidos;
     private PedidoRepository repositorioPedido;
 
 
@@ -44,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
         createNotificationChannel();
 
         btnNuevoPedido = (Button) findViewById(R.id.btnMainNuevoPedido);
-
 
         btnNuevoPedido.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,10 +72,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
+        btnPrepararPedidos= (Button)findViewById(R.id.btnPrepararPedidos);
+        btnPrepararPedidos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // lanzar un servicio Intent service
+            }
+        });
 
     }
+
+
+
     //Creación del canal - punto 2 lab 3
     private void createNotificationChannel() {
         // Crear el canal de notificaciones pero solo para API 26 io superior

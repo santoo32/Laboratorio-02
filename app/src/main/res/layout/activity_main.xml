@@ -31,6 +31,11 @@
         android:text="@string/historial_de_pedidos"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/btnPrepararPedidos"
+        android:text="@string/preparar_pedidos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <ImageView
         android:id="@+id/imageView"
