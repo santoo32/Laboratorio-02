@@ -9,6 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat">
+
         <activity
             android:name=".MainActivity"
             android:theme="@style/Theme.AppCompat">
@@ -38,24 +39,21 @@
             android:name=".PrepararPedidoService"
             android:enabled="true"
             android:exported="true" />
-        <service
-            android:name=".RestoFirebaseInstanceIdService"
-            android:enabled="true"
-            android:exported="true" />
+
         <service
             android:name=".RestoMessagingService"
             android:enabled="true"
-            android:exported="true"></service>
-
-        <service
-            android:name=".RestoMessagingService">
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
 
+
         <service
-            android:name=".RestoFirebaseInstanceIdService">
+            android:name=".RestoFirebaseInstanceIdService"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
