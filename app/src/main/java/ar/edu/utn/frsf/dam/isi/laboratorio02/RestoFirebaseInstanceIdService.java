@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 
 public class RestoFirebaseInstanceIdService extends FirebaseInstanceIdService {
@@ -16,7 +17,7 @@ public class RestoFirebaseInstanceIdService extends FirebaseInstanceIdService {
         /*Ejercicio 5 del lab 3 parte 2*/
 
         //Obtengo el valor del token...
-        String token = leerToken();
+        String token = FirebaseInstanceId.getInstance().getToken();
         //Para después guardarlo
         guardartoken(token);
 
