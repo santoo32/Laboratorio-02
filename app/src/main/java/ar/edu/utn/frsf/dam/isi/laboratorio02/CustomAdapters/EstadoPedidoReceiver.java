@@ -21,7 +21,6 @@ public class EstadoPedidoReceiver extends BroadcastReceiver {
 
     public  static final String ESTADO_ACEPTADO="frsf.dam.isi.laboratorio02.EVENTO_01_MSG";
     public  static final String ESTADO_EN_PREPARACION="frsf.dam.isi.laboratorio02.EVENTO_02_MSG";
-
     private PedidoRepository p1;
 
     @Override
@@ -29,10 +28,11 @@ public class EstadoPedidoReceiver extends BroadcastReceiver {
 
         Bundle extras = intent.getExtras();
         int id = extras.getInt("id_pedido");
+        p1 = new PedidoRepository();
+        Pedido ped;
 
         if (intent.getAction().equals(ESTADO_ACEPTADO)) {
-            p1 = new PedidoRepository();
-            Pedido ped = p1.buscarPorId(id);
+             ped = p1.buscarPorId(id);
             //Toast.makeText(context,"Pedido para " + ped.getMailContacto() + "ha cambiado de estado a aceptado",Toast.LENGTH_LONG).show();
 
             Intent i = new Intent(context,Historial_pedidos.class);
@@ -51,6 +51,26 @@ public class EstadoPedidoReceiver extends BroadcastReceiver {
             //Muestro la notificación
             NotificationManagerCompat notManager = NotificationManagerCompat.from(context);
             notManager.notify(99,mBuilder.build());
+        }else{
+            if(intent.getAction().equals(ESTADO_EN_PREPARACION)){
+                ped = p1.buscarPorId(id);
+                Intent i = new Intent(context,Historial_pedidos.class);
+                PendingIntent penInt = PendingIntent.getActivity(context,0,i,0);
+                //Creo la notificación
+                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, "CANAL01")
+                    .setSmallIcon(R.drawable.logo)
+                    .setContentTitle("Tu pedido esta en preparacion")
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setStyle(new NotificationCompat.InboxStyle()
+                        .addLine("El pedido "+ped.getId().toString())
+                        .addLine("Encargado por: "+ped.getMailContacto()))
+                    .setContentIntent(penInt)
+                    .setAutoCancel(true);
+
+                //Muestro la notificación
+                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+                notificationManager.notify(98,mBuilder.build());
+            }
         }
     }
 }

@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         btnPrepararPedidos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(view.getContext() ,PrepararPedidoService.class);
+                Intent intent = new Intent(view.getContext(), PrepararPedidoService.class);
                 startService(intent);
             }
         });

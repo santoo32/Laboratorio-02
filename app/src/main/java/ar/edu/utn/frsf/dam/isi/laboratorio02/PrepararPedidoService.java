@@ -16,7 +16,7 @@ import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Pedido;
 public class PrepararPedidoService extends IntentService {
     private BroadcastReceiver br;
     private IntentFilter filtro;
-    private Pedido p1;
+    //private Pedido p1;
 
     public PrepararPedidoService() {
         super("PrepararPedidoService");
@@ -26,11 +26,13 @@ public class PrepararPedidoService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         br = new EstadoPedidoReceiver();
         filtro = new IntentFilter();
-        filtro.addAction(EstadoPedidoReceiver.ESTADO_ACEPTADO);
+        filtro.addAction(EstadoPedidoReceiver.ESTADO_EN_PREPARACION);
         getApplication().getApplicationContext().registerReceiver(br, filtro);
         final Intent i = new Intent();
 
+
         Runnable r = new Runnable() {
+
             @Override
             public void run() {
                 try {
@@ -45,18 +47,20 @@ public class PrepararPedidoService extends IntentService {
                 List<Pedido> lista = repositorioPedido.getLista();
                 //Cambio el estado
                 for (Pedido p : lista) {
-                    if (p.getEstado().equals(Pedido.Estado.ACEPTADO))
+                    if (p.getEstado().equals(Pedido.Estado.ACEPTADO)) {
                         p.setEstado(Pedido.Estado.EN_PREPARACION);
+
+                        i.putExtra("idPedido",p.getId());
+                        i.setAction(EstadoPedidoReceiver.ESTADO_EN_PREPARACION);
+                        sendBroadcast(i);
+                    }
                 }
 
-                i.putExtra("idPedido",p1.getId());
-                i.setAction(EstadoPedidoReceiver.ESTADO_EN_PREPARACION);
-                sendBroadcast(i);
+
             }
         };
-        Thread unHilo = new Thread();
-        new Thread(r , ("unHilo")).start();
-
+        Thread unHi = new Thread();
+        new Thread(r , ("unHi")).start();
 
     }
 
