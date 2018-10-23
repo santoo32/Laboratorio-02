@@ -1,5 +1,7 @@
 package ar.edu.utn.frsf.dam.isi.laboratorio02.modelo;
 
+import java.util.List;
+
 public class PedidoDetalle {
 
     private static int ID_DETALLE =1;
@@ -50,5 +52,19 @@ public class PedidoDetalle {
     @Override
     public String toString() {
         return producto.getNombre() + "( $"+producto.getPrecio()+")"+ cantidad;
+    }
+
+    public Double calcularCosto(List<PedidoDetalle> detalle) {
+
+        Double costo = 0.0;
+
+        for(int i = 0; i < detalle.size(); i++){
+
+            costo += detalle.get(i).getProducto().getPrecio() * detalle.get(i).getCantidad();
+
+        }
+
+
+        return costo;
     }
 }
