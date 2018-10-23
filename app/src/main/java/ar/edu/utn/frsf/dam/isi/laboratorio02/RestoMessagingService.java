@@ -26,11 +26,13 @@ public class RestoMessagingService extends FirebaseMessagingService {
 
     public void onMessageReceived(RemoteMessage remoteMessage) {
         //Extraigos los datos del mensaje remoto
-        Map<String,String> remoteData = remoteMessage.getData();
-        int id = Integer.parseInt(remoteData.get("ID_PEDIDO"));
-        String estado = remoteData.get("NUEVO_ESTADO");
+        Object[] remoteData = remoteMessage.getData().values().toArray();
+        int id = Integer.valueOf(remoteData[0].toString());
+        //Map<String,String> remoteData = remoteMessage.getData();
+        //int id = Integer.valueOf(remoteData.get("ID_PEDIDO"));
+        //String estado = remoteData.get("NUEVO_ESTADO");
 
-        //Obtengo el pedido por el id
+                //Obtengo el pedido por el id
         pedRepo = new PedidoRepository();
         p = pedRepo.buscarPorId(id);
         //Actualizo su estado a LISTO
@@ -44,6 +46,7 @@ public class RestoMessagingService extends FirebaseMessagingService {
         final Intent i = new Intent();
 
         i.putExtra("idPedido",p.getId());
+        i.putExtra("estado", "ESTADO_LISTO");
         i.setAction(EstadoPedidoReceiver.ESTADO_LISTO);
         sendBroadcast(i);
     }
