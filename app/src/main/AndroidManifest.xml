@@ -9,7 +9,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat">
-
         <activity
             android:name=".MainActivity"
             android:theme="@style/Theme.AppCompat">
@@ -22,6 +21,7 @@
         <activity android:name=".Productos_ofrecidos" />
         <activity android:name=".Alta_pedidos" />
         <activity android:name=".Historial_pedidos" />
+        <activity android:name=".ConfiguracionActivity" />
 
         <receiver
             android:name=".CustomAdapters.EstadoPedidoReceiver"
@@ -39,30 +39,28 @@
             android:name=".PrepararPedidoService"
             android:enabled="true"
             android:exported="true" />
-
         <service
             android:name=".RestoMessagingService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
-
         <service
             android:name=".RestoFirebaseInstanceIdService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="CANAL01"/>
+            android:value="CANAL01" />
 
+        <activity android:name=".setear_preferencias"></activity>
     </application>
 
 </manifest>
