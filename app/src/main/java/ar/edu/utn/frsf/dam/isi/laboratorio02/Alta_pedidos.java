@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -81,6 +83,12 @@ public class Alta_pedidos extends AppCompatActivity{
         eliminar_prod = (Button) findViewById(R.id.button6);
 
 
+        //Seteo desde el archivo de preferencias
+        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        String pref_mail = SP.getString("edit_text_preference_1", "");
+        Boolean pref_domic = SP.getBoolean("check_box_preference_1", false);
+        retiro_local.setChecked(pref_domic);
+        mail_contacto.setText(pref_mail);
 
         //Inicializar variables
         //Calendar c = Calendar.getInstance();
