@@ -59,7 +59,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginRight="5dp"
             android:layout_marginBottom="5dp"
-            android:text="Preferencias" />
+            android:text="Categorias" />
     </RelativeLayout>
 
 

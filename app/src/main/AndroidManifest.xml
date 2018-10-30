@@ -60,7 +60,8 @@
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="CANAL01" />
 
-        <activity android:name=".setear_preferencias"></activity>
+        <activity android:name=".setear_preferencias" />
+        <activity android:name=".REST.CategoriaActivity"></activity>
     </application>
 
 </manifest>
