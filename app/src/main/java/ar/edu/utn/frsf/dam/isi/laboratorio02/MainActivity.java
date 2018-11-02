@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import ar.edu.utn.frsf.dam.isi.laboratorio02.REST.CategoriaActivity;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.dao.PedidoRepository;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.dao.ProductoRepository;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Categoria;
@@ -35,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnListaProductos;
     private Button btnPrepararPedidos;
     private PedidoRepository repositorioPedido;
-    private Button preferencias;
+    private Button categorias;
 
 
 
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         createNotificationChannel();
 
         btnNuevoPedido = (Button) findViewById(R.id.btnMainNuevoPedido);
-        preferencias = (Button) findViewById(R.id.pref);
+        categorias = (Button) findViewById(R.id.pref);
 
         btnNuevoPedido.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,10 +58,10 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
-        preferencias.setOnClickListener(new View.OnClickListener() {
+        categorias.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(view.getContext(), ConfiguracionActivity.class );
+                Intent i = new Intent(view.getContext(), CategoriaActivity.class );
                 startActivity(i);
             }
         });
