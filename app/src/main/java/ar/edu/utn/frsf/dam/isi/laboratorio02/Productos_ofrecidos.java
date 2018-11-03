@@ -15,10 +15,14 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 
+import org.json.JSONException;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import ar.edu.utn.frsf.dam.isi.laboratorio02.REST.CategoriaRest;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.dao.ProductoRepository;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Categoria;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Producto;
@@ -30,6 +34,7 @@ public class Productos_ofrecidos extends AppCompatActivity {
     private EditText cantidad_pedir;
     private Intent i;
     private Integer ID;
+    private ArrayAdapter<Producto> productosAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +51,7 @@ public class Productos_ofrecidos extends AppCompatActivity {
         listprod = (ListView) findViewById(R.id.listprod);
         listprod.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
         cantidad_pedir = (EditText) findViewById(R.id.cantidad_pedir);
+
         final ProductoRepository prodrepos = new ProductoRepository();
         i = new Intent();
         agregar.setEnabled(false);
@@ -64,14 +70,14 @@ public class Productos_ofrecidos extends AppCompatActivity {
 
 
         //---------Adapter lista de categorias-------------------------------------------------------------------
-        List<Categoria> categorias = new ArrayList<>();
+        /*List<Categoria> categorias = new ArrayList<>();
         categorias = prodrepos.getCategorias();
         ArrayAdapter<Categoria> adaptador_categoria_prod = new ArrayAdapter<>(this , android.R.layout.simple_spinner_item, categorias);
         adaptador_categoria_prod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerCat.setAdapter(adaptador_categoria_prod);
+        spinnerCat.setAdapter(adaptador_categoria_prod);*/
 
         //--------Adapter producto por categoria---------------------------------------------------
-        spinnerCat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        /*spinnerCat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Categoria cat = prodrepos.getCategorias().get(position);
@@ -86,7 +92,54 @@ public class Productos_ofrecidos extends AppCompatActivity {
 
             }
         });
+*/
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                CategoriaRest catRest = new CategoriaRest();
+                final Categoria[] cats;
+                try {
+                    cats = catRest.listarTodas().toArray(new Categoria[0]);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ArrayAdapter<Categoria> categoriasAdapter = new ArrayAdapter<Categoria>(Productos_ofrecidos.this, android.R.layout.simple_spinner_dropdown_item, cats);
+                        spinnerCat.setAdapter(categoriasAdapter);
+                        spinnerCat.setSelection(0);
+
+                        spinnerCat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                            @Override
+                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                                ArrayAdapter<Producto> adaptador_prod = new ArrayAdapter<Producto>(getApplicationContext(), android.R.layout.simple_list_item_single_choice, prodrepos.buscarPorCategoria(cats[position]));
+                                adaptador_prod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                listprod.setAdapter(adaptador_prod);
+                                listprod.setItemChecked(0, true);
+                                adaptador_prod.notifyDataSetChanged();
+
+                            }
+
+                            @Override
+                            public void onNothingSelected(AdapterView<?> parent) {
+
+                            }
+                        });
+
+                    }
+                });
+            }
+
+        };
+
+        Thread hiloCargarComo = new Thread(r);
+        hiloCargarComo.start();
 
         listprod.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
