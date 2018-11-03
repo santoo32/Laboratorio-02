@@ -15,6 +15,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import org.json.JSONException;
+
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 
 import ar.edu.utn.frsf.dam.isi.laboratorio02.REST.CategoriaActivity;
+import ar.edu.utn.frsf.dam.isi.laboratorio02.REST.CategoriaRest;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.dao.PedidoRepository;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.dao.ProductoRepository;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Categoria;
@@ -44,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
 
         //Llamo al método para crear el canal de notificaciones
         createNotificationChannel();
