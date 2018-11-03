@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.net.ProtocolException;
 import java.util.List;
 
 import ar.edu.utn.frsf.dam.isi.laboratorio02.CustomAdapters.EstadoPedidoReceiver;
@@ -34,14 +35,18 @@ public class CategoriaActivity extends AppCompatActivity {
                 Runnable r = new Runnable() {
                     @Override
                     public void run() {
-                        /*try {
+                        try {
                             Thread.currentThread().sleep(10000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
-                        }*/
+                        }
                         Categoria cat1 = new Categoria(textoCat.getText().toString());
                         CategoriaRest Restrepo = new CategoriaRest();
-                        Restrepo.crearCategoria(cat1);
+                        try {
+                            Restrepo.crearCategoria(cat1);
+                        } catch (ProtocolException e) {
+                            e.printStackTrace();
+                        }
 
                         runOnUiThread(new Runnable() {
                             @Override

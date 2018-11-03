@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ar.edu.utn.frsf.dam.isi.laboratorio02">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -14,7 +17,6 @@
             android:theme="@style/Theme.AppCompat">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -60,7 +62,7 @@
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="CANAL01" />
 
-        <activity android:name=".setear_preferencias" />
+
         <activity android:name=".REST.CategoriaActivity"></activity>
     </application>
 

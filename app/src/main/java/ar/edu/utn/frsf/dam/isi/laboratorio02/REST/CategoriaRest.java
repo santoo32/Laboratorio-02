@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Categoria;
@@ -22,7 +23,7 @@ public class CategoriaRest {
     public CategoriaRest() {
     }
 
-    public void crearCategoria(Categoria c) {
+    public void crearCategoria(Categoria c) throws ProtocolException {
 
         //Variables de conexión y stream de escritura y lectura
         HttpURLConnection urlConnection = null;
@@ -40,7 +41,7 @@ public class CategoriaRest {
         //Abrir una conexión al servidor para enviar el POST
         URL url = null;
         try {
-            url = new URL("_________________________");
+            url = new URL("http://10.0.2.2:5000/categorias");
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -50,9 +51,9 @@ public class CategoriaRest {
             e.printStackTrace();
         }
         urlConnection.setChunkedStreamingMode(0);
-        urlConnection.setRequestProperty("Content-Type", ______________);
+        urlConnection.setRequestProperty("Content-Type", "application/json");
         urlConnection.setDoOutput(true);
-        urlConnection.setRequestMethod(____________);
+        urlConnection.setRequestMethod("POST");
 
         //Obtener el outputStream para escribir el JSON
         try {
