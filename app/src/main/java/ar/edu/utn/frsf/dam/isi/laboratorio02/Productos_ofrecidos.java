@@ -31,6 +31,7 @@ public class Productos_ofrecidos extends AppCompatActivity {
     private Spinner spinnerCat;
     private ListView listprod;
     private Button agregar;
+    private Button gestionprod;
     private EditText cantidad_pedir;
     private Intent i;
     private Integer ID;
@@ -42,12 +43,10 @@ public class Productos_ofrecidos extends AppCompatActivity {
         setContentView(R.layout.activity_productos_ofrecidos);
 
 
-
-
-
         spinnerCat = (Spinner) findViewById(R.id.spinner_cat);
         agregar = (Button) findViewById(R.id.btnProdAddPedido);
         spinnerCat.setSelection(0);
+        gestionprod = findViewById(R.id.buttongestion);
         listprod = (ListView) findViewById(R.id.listprod);
         listprod.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
         cantidad_pedir = (EditText) findViewById(R.id.cantidad_pedir);
@@ -59,14 +58,13 @@ public class Productos_ofrecidos extends AppCompatActivity {
 
         //--------Analizando si se reciben datos en el Intent---------------------
         Bundle extras = getIntent().getExtras();
-        if(extras!= null){
+        if (extras != null) {
 
-            if(extras.getInt("NUEVO_PEDIDO") == 1) {
+            if (extras.getInt("NUEVO_PEDIDO") == 1) {
                 agregar.setEnabled(true);
                 cantidad_pedir.setEnabled(true);
             }
         }
-
 
 
         //---------Adapter lista de categorias-------------------------------------------------------------------
@@ -146,7 +144,7 @@ public class Productos_ofrecidos extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Producto prod = (Producto) adapterView.getItemAtPosition(i);
                 ID = prod.getId();
-                Log.d("TAGGGGGG", prod.getNombre() );
+                Log.d("TAGGGGGG", prod.getNombre());
             }
         });
         agregar.setOnClickListener(new View.OnClickListener() {
@@ -155,10 +153,18 @@ public class Productos_ofrecidos extends AppCompatActivity {
                 int cant = Integer.parseInt(cantidad_pedir.getText().toString());
                 i.putExtra("cantidad", cant);
                 i.putExtra("idProducto", ID);
-                setResult(Activity.RESULT_OK,i);
+                setResult(Activity.RESULT_OK, i);
                 finish();
             }
         });
+        gestionprod.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(v.getContext(), GestionProductoActivity.class);
+                startActivity(i);
+            }
+        });
+
 
     }
 

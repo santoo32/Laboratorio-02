@@ -17,6 +17,7 @@
             android:theme="@style/Theme.AppCompat">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -62,8 +63,8 @@
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="CANAL01" />
 
-
-        <activity android:name=".REST.CategoriaActivity"></activity>
+        <activity android:name=".REST.CategoriaActivity" />
+        <activity android:name=".GestionProductoActivity"></activity>
     </application>
 
 </manifest>
