@@ -90,6 +90,12 @@ public class GestionProductoActivity extends AppCompatActivity {
         idProductoBuscar.setEnabled(false);
         comboCategorias.setSelection(0);
 
+        nombreProducto.setText("");
+        descProducto.setText("");
+        precioProducto.setText("");
+        idProductoBuscar.setText("");
+
+
         opcionNuevoBusqueda.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -104,7 +110,7 @@ public class GestionProductoActivity extends AppCompatActivity {
         btnGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (nombreProducto.getText().toString() == "" || descProducto.getText().toString() == "" || precioProducto.getText().toString() == "") {
+                if (nombreProducto.getText().toString().equals("") || descProducto.getText().toString().equals("") || precioProducto.getText().toString().equals("")) {
                     Toast.makeText(getApplicationContext(), "Debe completar todos los campos", Toast.LENGTH_LONG).show();
                 } else {
                     Double precio = new Double(precioProducto.getText().toString());
@@ -140,7 +146,7 @@ public class GestionProductoActivity extends AppCompatActivity {
         btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (idProductoBuscar.getText().toString() == "") {
+                if (idProductoBuscar.getText().toString().equals("")) {
                     Toast.makeText(getApplicationContext(), "Debe completar el ID a buscar", Toast.LENGTH_LONG).show();
                 } else {
                     ProductoRetrofit clienteRest = RestClient.getInstance().getRetrofit().create(ProductoRetrofit.class);
