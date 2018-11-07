@@ -59,7 +59,6 @@ public class Productos_ofrecidos extends AppCompatActivity {
         //--------Analizando si se reciben datos en el Intent---------------------
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-
             if (extras.getInt("NUEVO_PEDIDO") == 1) {
                 agregar.setEnabled(true);
                 cantidad_pedir.setEnabled(true);
@@ -89,8 +88,8 @@ public class Productos_ofrecidos extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {
 
             }
-        });
-*/
+        });*/
+
         Runnable r = new Runnable() {
             @Override
             public void run() {
@@ -108,19 +107,19 @@ public class Productos_ofrecidos extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        ArrayAdapter<Categoria> categoriasAdapter = new ArrayAdapter<Categoria>(Productos_ofrecidos.this, android.R.layout.simple_spinner_dropdown_item, cats);
-                        spinnerCat.setAdapter(categoriasAdapter);
+                        //ArrayAdapter<Categoria> categoriasAdapter = new ArrayAdapter<Categoria>(Productos_ofrecidos.this, android.R.layout.simple_spinner_dropdown_item, cats);
+                        //spinnerCat.setAdapter(categoriasAdapter);
                         spinnerCat.setSelection(0);
 
                         spinnerCat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                             @Override
                             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                                ArrayAdapter<Producto> adaptador_prod = new ArrayAdapter<Producto>(getApplicationContext(), android.R.layout.simple_list_item_single_choice, prodrepos.buscarPorCategoria(cats[position]));
+                                /*ArrayAdapter<Producto> adaptador_prod = new ArrayAdapter<Producto>(getApplicationContext(), android.R.layout.simple_list_item_single_choice, prodrepos.buscarPorCategoria(cats[position]));
                                 adaptador_prod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                                 listprod.setAdapter(adaptador_prod);
                                 listprod.setItemChecked(0, true);
-                                adaptador_prod.notifyDataSetChanged();
+                                adaptador_prod.notifyDataSetChanged();*/
 
                             }
 

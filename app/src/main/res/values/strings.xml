@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Laboratorio02</string>
+    <string name="app_name">Pedidos casi YA</string>
     <string name="main_titulo">Menu de opciones</string>
     <string name="nuevo_pedido">Nuevo Pedido</string>
     <string name="ver_lista_de_productos">Ver Lista de productos</string>
