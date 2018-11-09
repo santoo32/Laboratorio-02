@@ -177,5 +177,33 @@ public class GestionProductoActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        btnBorrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (nombreProducto.getText().toString().equals("") || descProducto.getText().toString().equals("") || precioProducto.getText().toString().equals("")) {
+                    Toast.makeText(getApplicationContext(), "Debe buscar un producto primero", Toast.LENGTH_LONG).show();
+                } else {
+                    ProductoRetrofit clienteRest = RestClient.getInstance().getRetrofit().create(ProductoRetrofit.class);
+                    Integer idabuscar = new Integer(idProductoBuscar.getText().toString());
+                    Call<Producto> altaCall = clienteRest.borrar(idabuscar);
+                    altaCall.enqueue(new Callback<Producto>() {
+                        @Override
+                        public void onResponse(Call<Producto> call, Response<Producto> resp) {
+                            Producto onresponse = resp.body();
+                            nombreProducto.setText("");
+                            descProducto.setText("");
+                            precioProducto.setText("");
+                            Toast.makeText(getApplicationContext(), "Producto Borrado", Toast.LENGTH_LONG).show();
+                        }
+
+                        @Override
+                        public void onFailure(Call<Producto> call, Throwable t) {
+                            Toast.makeText(getApplicationContext(), "Algo salio mal, intente nuevamente mas tarde", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            }
+        });
     }
 }

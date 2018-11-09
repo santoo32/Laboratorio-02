@@ -5,6 +5,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/backvert"
     tools:context=".MainActivity">
 
     <TextView
@@ -18,24 +19,31 @@
 
     <Button
         android:id="@+id/btnMainNuevoPedido"
-        android:text="@string/nuevo_pedido"
+        style="@android:style/Widget.DeviceDefault.Button.Borderless"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:text="@string/nuevo_pedido" />
+
     <Button
         android:id="@+id/btnListaProductos"
-        android:text="@string/ver_lista_de_productos"
+        style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:text="@string/ver_lista_de_productos" />
+
     <Button
         android:id="@+id/btnHistorialPedidos"
-        android:text="@string/historial_de_pedidos"
+        style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:text="@string/historial_de_pedidos" />
+
     <Button
         android:id="@+id/btnPrepararPedidos"
-        android:text="@string/preparar_pedidos"
+        style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:text="@string/preparar_pedidos" />
 
     <ImageView
         android:id="@+id/imageView"
@@ -53,6 +61,7 @@
 
         <Button
             android:id="@+id/pref"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
