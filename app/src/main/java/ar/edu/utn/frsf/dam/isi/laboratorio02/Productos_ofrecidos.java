@@ -94,22 +94,29 @@ public class Productos_ofrecidos extends AppCompatActivity {
             @Override
             public void run() {
                 CategoriaRest catRest = new CategoriaRest();
-                final Categoria[] cats;
+                //Creo esta variable porque tenía problema con la variable final cats
+                Categoria[] aux = null;
+
                 try {
-                    cats = catRest.listarTodas().toArray(new Categoria[0]);
+                    aux = catRest.listarTodas().toArray(new Categoria[0]);
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
+                final Categoria[] cats = aux;
+
 
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        //ArrayAdapter<Categoria> categoriasAdapter = new ArrayAdapter<Categoria>(Productos_ofrecidos.this, android.R.layout.simple_spinner_dropdown_item, cats);
-                        //spinnerCat.setAdapter(categoriasAdapter);
+                        ArrayAdapter<Categoria> categoriasAdapter = new ArrayAdapter<Categoria>(getApplicationContext()/*Productos_ofrecidos.this*/, android.R.layout.simple_spinner_dropdown_item, cats);
+                        spinnerCat.setAdapter(categoriasAdapter);
                         spinnerCat.setSelection(0);
+
+                        final ArrayAdapter<Producto> adaptador_prod = new ArrayAdapter<Producto>(getApplicationContext(), android.R.layout.simple_list_item_single_choice, prodrepos.buscarPorCategoria((Categoria)spinnerCat.getItemAtPosition(0)));
+                        listprod.setAdapter(adaptador_prod);
 
                         spinnerCat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                             @Override
@@ -120,6 +127,8 @@ public class Productos_ofrecidos extends AppCompatActivity {
                                 listprod.setAdapter(adaptador_prod);
                                 listprod.setItemChecked(0, true);
                                 adaptador_prod.notifyDataSetChanged();*/
+                                adaptador_prod.clear();
+                                adaptador_prod.addAll(prodrepos.buscarPorCategoria((Categoria)parent.getItemAtPosition(position)));
 
                             }
 
@@ -137,6 +146,8 @@ public class Productos_ofrecidos extends AppCompatActivity {
 
         Thread hiloCargarComo = new Thread(r);
         hiloCargarComo.start();
+
+        listprod.setSelection(0);
 
         listprod.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
