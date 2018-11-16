@@ -27,7 +27,6 @@ import ar.edu.utn.frsf.dam.isi.laboratorio02.dao.MyDatabase;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Categoria;
 
 public class CategoriaRest {
-    private CategoriaDAO categoriaDAO;
 
     public CategoriaRest() {
     }
@@ -199,11 +198,5 @@ public class CategoriaRest {
         }
 
         return resultado;
-    }
-
-    //Req 05
-    public List<Categoria> listarTodas(Context ctx){
-        categoriaDAO = MyDatabase.getInstance(ctx).getCategoriaDAO();
-        return categoriaDAO.getAll();
     }
 }

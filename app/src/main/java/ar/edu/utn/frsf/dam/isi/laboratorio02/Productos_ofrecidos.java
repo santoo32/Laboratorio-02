@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import ar.edu.utn.frsf.dam.isi.laboratorio02.REST.CategoriaRest;
+import ar.edu.utn.frsf.dam.isi.laboratorio02.dao.MyDatabase;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.dao.ProductoRepository;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Categoria;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Producto;
@@ -93,7 +94,7 @@ public class Productos_ofrecidos extends AppCompatActivity {
         Runnable r = new Runnable() {
             @Override
             public void run() {
-                CategoriaRest catRest = new CategoriaRest();
+                //CategoriaRest catRest = new CategoriaRest();
 
                 /*
                 //Creo esta variable porque tenía problema con la variable final cats
@@ -107,8 +108,9 @@ public class Productos_ofrecidos extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 */
-                //req 05 - Verificar asignación
-                final Categoria[] cats = catRest.listarTodas(getApplicationContext()).toArray(new Categoria[0]);
+                //req 05
+                MyDatabase.getInstance(getApplicationContext());
+                final List<Categoria> cats = MyDatabase.getAll();
 
 
                 runOnUiThread(new Runnable() {

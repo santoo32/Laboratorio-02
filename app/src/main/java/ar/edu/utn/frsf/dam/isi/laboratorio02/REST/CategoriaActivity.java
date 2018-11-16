@@ -3,6 +3,7 @@ package ar.edu.utn.frsf.dam.isi.laboratorio02.REST;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,7 +27,6 @@ public class CategoriaActivity extends AppCompatActivity {
     private EditText textoCat;
     private Button btnCrear;
     private Button btnMenu;
-    private CategoriaDAO categoriaDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +34,9 @@ public class CategoriaActivity extends AppCompatActivity {
         setContentView(R.layout.activity_categoria);
         textoCat = (EditText) findViewById(R.id.txtNombreCategoria);
         btnCrear = (Button) findViewById(R.id.btnCrearCategoria);
-        //lab 4 parte 2 - req05
-        categoriaDAO = MyDatabase.getInstance(this).getCategoriaDAO();
+
+        //lab 4 parte 2 - req05 -- Inicializo la bd
+        MyDatabase.getInstance(getApplicationContext());
 
         btnCrear.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,7 +49,7 @@ public class CategoriaActivity extends AppCompatActivity {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        Categoria cat1 = new Categoria(textoCat.getText().toString());
+                        final Categoria cat1 = new Categoria(textoCat.getText().toString());
                         //lab 4 parte 1
                         /*
                         CategoriaRest Restrepo = new CategoriaRest();
@@ -59,14 +60,9 @@ public class CategoriaActivity extends AppCompatActivity {
                         }*/
 
                         //lab 4 parte 2 - req05
-                        System.out.println();
-                        System.out.println();
-                        System.out.println("Categoria : "+cat1.getNombre());
-                        System.out.println("Categoria : "+cat1.getId());
-                        System.out.println();
-                        System.out.println();
+
                         //Crea la categoria en la db local
-                        categoriaDAO.insert(cat1);
+                        MyDatabase.insertOne(cat1);
 
                         runOnUiThread(new Runnable() {
                             @Override

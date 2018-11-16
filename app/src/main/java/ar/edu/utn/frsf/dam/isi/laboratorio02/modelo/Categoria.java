@@ -2,32 +2,33 @@ package ar.edu.utn.frsf.dam.isi.laboratorio02.modelo;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
 import java.util.Objects;
-
-
+import java.util.Random;
 
 
 @Entity
 public class Categoria {
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id_categoria")
     private Integer id;
 
-    @ColumnInfo(name = "nombre")
     private String nombre;
 
+    @Ignore
     public Categoria(Integer id, String nombre) {
         this.id = id;
         this.nombre = nombre;
     }
 
     public Categoria(String nombre) {
-
+        /*Random r = new  Random();
+        this.id = r.nextInt();*/
         this.nombre = nombre;
     }
 
+    @Ignore
     public Categoria() {
     }
 

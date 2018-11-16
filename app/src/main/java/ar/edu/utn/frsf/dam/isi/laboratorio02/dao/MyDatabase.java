@@ -2,13 +2,18 @@ package ar.edu.utn.frsf.dam.isi.laboratorio02.dao;
 
 import android.arch.persistence.room.Room;
 import android.content.Context;
+import android.util.Log;
+
+import java.util.List;
+
+import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Categoria;
 
 public class MyDatabase {
 
     // variable de clase privada que almacena una instancia unica de esta entidad
     private static MyDatabase _INSTANCIA_UNICA=null;
     private Database db;
-    private CategoriaDAO categoriaDAO;
+    private static CategoriaDAO categoriaDAO;
 
     // metodo static publico que retorna la unica instancia de esta clase
     // si no existe, cosa que ocurre la primera vez que se invoca
@@ -30,11 +35,35 @@ public class MyDatabase {
                 Database.class, "dbPedidosCasiYa")
                 .fallbackToDestructiveMigration()
                 .build();
-        CategoriaDAO categoriaDAO = db.categoriaDAO();
+        categoriaDAO = db.categoriaDAO();
 
     }
 
     public CategoriaDAO getCategoriaDAO(){
         return this.categoriaDAO;
+    }
+
+    public static List<Categoria> getAll() {
+        return categoriaDAO.getAll();
+    }
+
+    public static List<Categoria> cargarPorId(int[] categoriaIds) {
+        return categoriaDAO.cargarPorId(categoriaIds);
+    }
+
+    public static void insertAll(Categoria... categorias) {
+        categoriaDAO.insertAll(categorias);
+    }
+
+    public static void insertOne(Categoria categoria) {
+        categoriaDAO.insertOne(categoria);
+    }
+
+    public static void delete(Categoria categoria) {
+        categoriaDAO.delete(categoria);
+    }
+
+    public static void update(Categoria categoria) {
+        categoriaDAO.update(categoria);
     }
 }

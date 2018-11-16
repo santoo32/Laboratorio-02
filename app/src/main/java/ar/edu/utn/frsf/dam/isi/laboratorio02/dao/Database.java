@@ -6,7 +6,7 @@ import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Categoria;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Pedido;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Producto;
                                                                                 //Valor de versión no se a que se refiere
-@android.arch.persistence.room.Database(entities = {Categoria.class/*,Producto.class,Pedido.class*/},version = 2)
+@android.arch.persistence.room.Database(entities = {Categoria.class/*,Producto.class,Pedido.class*/},version = 3)
 public abstract class Database extends RoomDatabase{
     public abstract CategoriaDAO categoriaDAO();
 

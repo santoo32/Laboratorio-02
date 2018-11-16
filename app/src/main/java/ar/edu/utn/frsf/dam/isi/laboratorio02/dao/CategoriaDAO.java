@@ -16,8 +16,14 @@ public interface CategoriaDAO {
     @Query("SELECT * FROM Categoria")
     List<Categoria> getAll();
 
+    @Query("SELECT * FROM Categoria WHERE id IN (:categoriaId)")
+    List<Categoria> cargarPorId(int[] categoriaId);
+
     @Insert
-    void insert(Categoria categoria);
+    void insertAll(Categoria... categorias);
+
+    @Insert
+    void insertOne(Categoria categoria);
 
     @Update
     void update(Categoria categoria);
