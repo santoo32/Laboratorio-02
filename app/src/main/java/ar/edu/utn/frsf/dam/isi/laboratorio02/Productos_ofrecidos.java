@@ -94,6 +94,8 @@ public class Productos_ofrecidos extends AppCompatActivity {
             @Override
             public void run() {
                 CategoriaRest catRest = new CategoriaRest();
+
+                /*
                 //Creo esta variable porque tenía problema con la variable final cats
                 Categoria[] aux = null;
 
@@ -104,14 +106,15 @@ public class Productos_ofrecidos extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-                final Categoria[] cats = aux;
+                */
+                //req 05 - Verificar asignación
+                final Categoria[] cats = catRest.listarTodas(getApplicationContext()).toArray(new Categoria[0]);
 
 
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        ArrayAdapter<Categoria> categoriasAdapter = new ArrayAdapter<Categoria>(getApplicationContext()/*Productos_ofrecidos.this*/, android.R.layout.simple_spinner_dropdown_item, cats);
+                        ArrayAdapter<Categoria> categoriasAdapter = new ArrayAdapter<Categoria>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, cats);
                         spinnerCat.setAdapter(categoriasAdapter);
                         spinnerCat.setSelection(0);
 

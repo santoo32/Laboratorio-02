@@ -1,5 +1,6 @@
 package ar.edu.utn.frsf.dam.isi.laboratorio02.REST;
 
+import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -21,9 +22,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import ar.edu.utn.frsf.dam.isi.laboratorio02.dao.CategoriaDAO;
+import ar.edu.utn.frsf.dam.isi.laboratorio02.dao.MyDatabase;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Categoria;
 
 public class CategoriaRest {
+    private CategoriaDAO categoriaDAO;
 
     public CategoriaRest() {
     }
@@ -197,4 +201,9 @@ public class CategoriaRest {
         return resultado;
     }
 
+    //Req 05
+    public List<Categoria> listarTodas(Context ctx){
+        categoriaDAO = MyDatabase.getInstance(ctx).getCategoriaDAO();
+        return categoriaDAO.getAll();
+    }
 }
