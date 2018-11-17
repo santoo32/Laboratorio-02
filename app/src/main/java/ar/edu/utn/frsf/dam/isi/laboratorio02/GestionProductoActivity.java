@@ -98,11 +98,25 @@ public class GestionProductoActivity extends AppCompatActivity {
         precioProducto.setText("");
         idProductoBuscar.setText("");
 
-        MyDatabase.getInstance(getApplicationContext());
-        final List<Categoria> cats = MyDatabase.getAll();
-        ArrayAdapter<Categoria> categoriasAdapter = new ArrayAdapter<Categoria>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, cats);
-        comboCategorias.setAdapter(categoriasAdapter);
-        comboCategorias.setSelection(0);
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                MyDatabase.getInstance(getApplicationContext());
+                final List<Categoria> cats = MyDatabase.getAll();
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ArrayAdapter<Categoria> categoriasAdapter = new ArrayAdapter<Categoria>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, cats);
+                        comboCategorias.setAdapter(categoriasAdapter);
+                        comboCategorias.setSelection(0);
+                    }
+                });
+            }
+        };
+        Thread hiloCagarAdaptadorCategoria = new Thread(r);
+        hiloCagarAdaptadorCategoria.start();
+
 
 
         opcionNuevoBusqueda.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -122,27 +136,46 @@ public class GestionProductoActivity extends AppCompatActivity {
                 if (nombreProducto.getText().toString().equals("") || descProducto.getText().toString().equals("") || precioProducto.getText().toString().equals("")) {
                     Toast.makeText(getApplicationContext(), "Debe completar todos los campos", Toast.LENGTH_LONG).show();
                 } else {
-                    Double precio = new Double(precioProducto.getText().toString());
-                    //Si no es una actaualización creo un producto nuevo
-                    if(!flagActualizacion){
+                    Runnable r = new Runnable() {
+                        @Override
+                        public void run() {
+                            Double precio = new Double(precioProducto.getText().toString());
+                            //Si no es una actaualización creo un producto nuevo
+                            if(!flagActualizacion){
 
-                        Producto p = new Producto(nombreProducto.getText().toString(), descProducto.getText().toString(), precio, (Categoria) comboCategorias.getSelectedItem());
-                        //Req 06 Parte 2 taller 4
-                        MyDatabase.getInstance(getApplicationContext());
-                        MyDatabase.insertOneProduct(p);
-                        Toast.makeText(GestionProductoActivity.this,"El producto fue creado",Toast.LENGTH_LONG).show();
-                    }else{
-                        //Obtengo el producto
-                        Producto prodActualizar = MyDatabase.cargarPorIdProducto(Integer.parseInt(idProductoBuscar.getText().toString()));
-                        //Actualizo los datos
-                        prodActualizar.setNombre(nombreProducto.getText().toString());
-                        prodActualizar.setDescripcion(descProducto.getText().toString());
-                        prodActualizar.setPrecio(precio);
-                        prodActualizar.setCategoria((Categoria)comboCategorias.getSelectedItem());
-                        //Guardo el producto actualizado
-                        MyDatabase.updateProducto(prodActualizar);
-                        Toast.makeText(GestionProductoActivity.this,"El producto fue actualizado",Toast.LENGTH_LONG).show();
-                    }
+                                Producto p = new Producto(nombreProducto.getText().toString(), descProducto.getText().toString(), precio, (Categoria) comboCategorias.getSelectedItem());
+                                //Req 06 Parte 2 taller 4
+                                MyDatabase.getInstance(getApplicationContext());
+                                MyDatabase.insertOneProduct(p);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(GestionProductoActivity.this,"El producto fue creado",Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }else{
+
+                                //Obtengo el producto
+                                Producto prodActualizar = MyDatabase.cargarPorIdProducto(Integer.parseInt(idProductoBuscar.getText().toString()));
+                                //Actualizo los datos
+                                prodActualizar.setNombre(nombreProducto.getText().toString());
+                                prodActualizar.setDescripcion(descProducto.getText().toString());
+                                prodActualizar.setPrecio(precio);
+                                prodActualizar.setCategoria((Categoria)comboCategorias.getSelectedItem());
+                                //Guardo el producto actualizado
+                                MyDatabase.updateProducto(prodActualizar);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(GestionProductoActivity.this,"El producto fue actualizado",Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
+                        }
+                    };
+                    Thread hiloGuardarProducto = new Thread(r);
+                    hiloGuardarProducto.start();
+
                     /*ProductoRetrofit clienteRest = RestClient.getInstance().getRetrofit().create(ProductoRetrofit.class);
                     Call<Producto> altaCall = clienteRest.crearProducto(p);
 
@@ -176,14 +209,26 @@ public class GestionProductoActivity extends AppCompatActivity {
                 if (idProductoBuscar.getText().toString().equals("")) {
                     Toast.makeText(getApplicationContext(), "Debe completar el ID a buscar", Toast.LENGTH_LONG).show();
                 } else {
-                    Integer idABuscar = new Integer(idProductoBuscar.getText().toString());
-                    MyDatabase.getInstance(getApplicationContext());
-                    final Producto prodBuscado = MyDatabase.cargarPorIdProducto(idABuscar);
+                    Runnable r = new Runnable() {
+                        @Override
+                        public void run() {
+                            Integer idABuscar = new Integer(idProductoBuscar.getText().toString());
+                            MyDatabase.getInstance(getApplicationContext());
+                            final Producto prodBuscado = MyDatabase.cargarPorIdProducto(idABuscar);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    nombreProducto.setText(prodBuscado.getNombre());
+                                    descProducto.setText(prodBuscado.getDescripcion());
+                                    precioProducto.setText(String.valueOf(prodBuscado.getPrecio()));
+                                    comboCategorias.setSelection(prodBuscado.getCategoria().getId()-1);
+                                }
+                            });
+                        }
+                    };
+                    Thread hiloBuscar = new Thread(r);
+                    hiloBuscar.start();
 
-                    nombreProducto.setText(prodBuscado.getNombre());
-                    descProducto.setText(prodBuscado.getDescripcion());
-                    precioProducto.setText(String.valueOf(prodBuscado.getPrecio()));
-                    comboCategorias.setSelection(prodBuscado.getCategoria().getId()-1);
                     /*ProductoRetrofit clienteRest = RestClient.getInstance().getRetrofit().create(ProductoRetrofit.class);
                     Call<Producto> altaCall = clienteRest.buscarProductoPorId(idabuscar);
 
@@ -218,21 +263,32 @@ public class GestionProductoActivity extends AppCompatActivity {
                 if (nombreProducto.getText().toString().equals("") || descProducto.getText().toString().equals("") || precioProducto.getText().toString().equals("")) {
                     Toast.makeText(getApplicationContext(), "Debe buscar un producto primero", Toast.LENGTH_LONG).show();
                 } else {
-                    //Busco el producto
-                    Integer idABuscar = new Integer(idProductoBuscar.getText().toString());
-                    MyDatabase.getInstance(getApplicationContext());
-                    Producto prodBorrar = MyDatabase.cargarPorIdProducto(idABuscar);
-                    //Lo borro
-                    MyDatabase.deleteProducto(prodBorrar);
-                    //Seteo los campos del layout
-                    nombreProducto.setText(null);
-                    descProducto.setText(null);
-                    precioProducto.setText(null);
-                    comboCategorias.setSelection(-1);
-                    idProductoBuscar.setText(null);
+                    Runnable r = new Runnable() {
+                        @Override
+                        public void run() {
+                            //Busco el producto
+                            Integer idABuscar = new Integer(idProductoBuscar.getText().toString());
+                            MyDatabase.getInstance(getApplicationContext());
+                            Producto prodBorrar = MyDatabase.cargarPorIdProducto(idABuscar);
+                            //Lo borro
+                            MyDatabase.deleteProducto(prodBorrar);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    //Seteo los campos del layout
+                                    nombreProducto.setText(null);
+                                    descProducto.setText(null);
+                                    precioProducto.setText(null);
+                                    comboCategorias.setSelection(-1);
+                                    idProductoBuscar.setText(null);
 
-                    Toast.makeText(GestionProductoActivity.this,"El producto fue eliminado", Toast.LENGTH_LONG).show();
-
+                                    Toast.makeText(GestionProductoActivity.this,"El producto fue eliminado", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+                    };
+                    Thread hiloBorrar = new Thread(r);
+                    hiloBorrar.start();
                     /*ProductoRetrofit clienteRest = RestClient.getInstance().getRetrofit().create(ProductoRetrofit.class);
                     Call<Producto> altaCall = clienteRest.borrar(idabuscar);
                     altaCall.enqueue(new Callback<Producto>() {

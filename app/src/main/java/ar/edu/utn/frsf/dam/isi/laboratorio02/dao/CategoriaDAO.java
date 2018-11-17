@@ -20,7 +20,7 @@ public interface CategoriaDAO {
     List<Categoria> cargarPorId(int[] categoriaId);
 
     @Insert
-    void insertAll(Categoria... categorias);
+    void insertAll(List<Categoria> categorias);
 
     @Insert
     void insertOne(Categoria categoria);

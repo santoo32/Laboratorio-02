@@ -149,7 +149,6 @@ public class Productos_ofrecidos extends AppCompatActivity {
             }
 
         };
-
         Thread hiloCargarComo = new Thread(r);
         hiloCargarComo.start();
 

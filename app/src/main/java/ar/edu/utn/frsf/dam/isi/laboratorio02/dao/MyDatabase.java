@@ -19,17 +19,21 @@ public class MyDatabase {
     private static CategoriaDAO categoriaDAO;
     private static ProductoDAO productoDAO;
     private static List<Producto> LISTA_PRODUCTOS = new ArrayList<>();
-    private static List<Categoria> CATEGORIAS_PRODUCTOS;
+    private static List<Categoria> CATEGORIAS_PRODUCTOS = new ArrayList<>();
     private static boolean FLAG_INICIALIZADO = false;
 
     //Inicializo los productos
     private static void inicializar(){
         int id = 0;
         Random rand = new Random();
-        CATEGORIAS_PRODUCTOS = categoriaDAO.getAll();
+        CATEGORIAS_PRODUCTOS.add(new Categoria(/*1,*/"Entrada"));
+        CATEGORIAS_PRODUCTOS.add(new Categoria(/*2,*/"Plato Principal"));
+        CATEGORIAS_PRODUCTOS.add(new Categoria(/*3,*/"Postre"));
+        CATEGORIAS_PRODUCTOS.add(new Categoria(/*4,*/"Bebida"));
+        categoriaDAO.insertAll(CATEGORIAS_PRODUCTOS);
         for(Categoria cat: CATEGORIAS_PRODUCTOS){
             for(int i=0;i<25;i++){
-                LISTA_PRODUCTOS.add(new Producto(id++,cat.getNombre()+" 1"+i,"descripcion "+(i*id)+rand.nextInt(100),rand.nextDouble()*500,cat));
+                LISTA_PRODUCTOS.add(new Producto(/*id++,*/cat.getNombre()+" 1"+i,"descripcion "+(i*id++)+rand.nextInt(100),rand.nextDouble()*500,cat));
             }
         }
         productoDAO.insertAll(LISTA_PRODUCTOS);
@@ -41,7 +45,9 @@ public class MyDatabase {
     // la crea, y si existe retorna la instancia existente.
 
     public static MyDatabase getInstance(Context ctx){
-        if(_INSTANCIA_UNICA==null) _INSTANCIA_UNICA = new MyDatabase(ctx);
+        if(_INSTANCIA_UNICA==null){
+            _INSTANCIA_UNICA = new MyDatabase(ctx);
+        }
         return _INSTANCIA_UNICA;
     }
 
@@ -56,6 +62,7 @@ public class MyDatabase {
                 Database.class, "dbPedidosCasiYa")
                 .fallbackToDestructiveMigration()
                 .build();
+        if(!FLAG_INICIALIZADO) inicializar();
         categoriaDAO = db.categoriaDAO();
         productoDAO = db.productoDAO();
 
@@ -69,7 +76,7 @@ public class MyDatabase {
         return categoriaDAO.cargarPorId(categoriaIds);
     }
 
-    public static void insertAll(Categoria... categorias) {
+    public static void insertAll(List<Categoria> categorias) {
         categoriaDAO.insertAll(categorias);
     }
 
@@ -98,14 +105,13 @@ public class MyDatabase {
     }
 
     public static List<Producto> buscarPorCategoria(Categoria categoria) {
-        if(!FLAG_INICIALIZADO) inicializar();
         List<Producto> resultado = new ArrayList<>();
         //Busco todos los productos
         List<Producto> todosLosProductos = productoDAO.getAll();
         //Por cada producto me fijo si pertenece a la categoria que se pasa como parametro
-        for(int i = 0; i<todosLosProductos.size();i++){
-            if(todosLosProductos.get(i).getCategoria().getId().equals(categoria.getId())){
-                resultado.add(todosLosProductos.get(i));
+        for(Producto p: todosLosProductos){
+            if(p.getCategoria().getId().equals(categoria.getId())){
+                resultado.add(p);
             }
         }
         //Devuelvo resultado
