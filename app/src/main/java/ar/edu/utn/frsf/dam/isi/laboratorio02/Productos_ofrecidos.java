@@ -120,10 +120,13 @@ public class Productos_ofrecidos extends AppCompatActivity {
                         ArrayAdapter<Categoria> categoriasAdapter = new ArrayAdapter<Categoria>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, cats);
                         spinnerCat.setAdapter(categoriasAdapter);
                         spinnerCat.setSelection(0);
-
+                    }
+                });
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
                         final ArrayAdapter<Producto> adaptador_prod = new ArrayAdapter<Producto>(getApplicationContext(), android.R.layout.simple_list_item_single_choice, /*prodrepos.*/MyDatabase.buscarPorCategoria((Categoria)spinnerCat.getItemAtPosition(0)));
                         listprod.setAdapter(adaptador_prod);
-
                         spinnerCat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                             @Override
                             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -143,7 +146,6 @@ public class Productos_ofrecidos extends AppCompatActivity {
 
                             }
                         });
-
                     }
                 });
             }

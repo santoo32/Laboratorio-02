@@ -18,8 +18,8 @@ public class MyDatabase {
     private Database db;
     private static CategoriaDAO categoriaDAO;
     private static ProductoDAO productoDAO;
-    private static List<Producto> LISTA_PRODUCTOS = new ArrayList<>();
-    private static List<Categoria> CATEGORIAS_PRODUCTOS = new ArrayList<>();
+    private static List<Producto> LISTA_PRODUCTOS;
+    private static List<Categoria> CATEGORIAS_PRODUCTOS;
     private static boolean FLAG_INICIALIZADO = false;
 
     //Inicializo los productos
@@ -30,12 +30,13 @@ public class MyDatabase {
         CATEGORIAS_PRODUCTOS.add(new Categoria(/*2,*/"Plato Principal"));
         CATEGORIAS_PRODUCTOS.add(new Categoria(/*3,*/"Postre"));
         CATEGORIAS_PRODUCTOS.add(new Categoria(/*4,*/"Bebida"));
-        categoriaDAO.insertAll(CATEGORIAS_PRODUCTOS);
+
         for(Categoria cat: CATEGORIAS_PRODUCTOS){
-            for(int i=0;i<25;i++){
+            for(int i=0;i<5;i++){
                 LISTA_PRODUCTOS.add(new Producto(/*id++,*/cat.getNombre()+" 1"+i,"descripcion "+(i*id++)+rand.nextInt(100),rand.nextDouble()*500,cat));
             }
         }
+        categoriaDAO.insertAll(CATEGORIAS_PRODUCTOS);
         productoDAO.insertAll(LISTA_PRODUCTOS);
         FLAG_INICIALIZADO=true;
     }
@@ -62,9 +63,14 @@ public class MyDatabase {
                 Database.class, "dbPedidosCasiYa")
                 .fallbackToDestructiveMigration()
                 .build();
-        if(!FLAG_INICIALIZADO) inicializar();
+
+        CATEGORIAS_PRODUCTOS = new ArrayList<>();
+        LISTA_PRODUCTOS = new ArrayList<>();
         categoriaDAO = db.categoriaDAO();
         productoDAO = db.productoDAO();
+
+        if(!FLAG_INICIALIZADO) inicializar();
+
 
     }
 
@@ -104,16 +110,27 @@ public class MyDatabase {
         return productoDAO.cargarPorId(productoId);
     }
 
-    public static List<Producto> buscarPorCategoria(Categoria categoria) {
-        List<Producto> resultado = new ArrayList<>();
-        //Busco todos los productos
-        List<Producto> todosLosProductos = productoDAO.getAll();
-        //Por cada producto me fijo si pertenece a la categoria que se pasa como parametro
-        for(Producto p: todosLosProductos){
-            if(p.getCategoria().getId().equals(categoria.getId())){
-                resultado.add(p);
+    public static List<Producto> buscarPorCategoria(final Categoria categoria) {
+        final List<Producto> resultado = new ArrayList<>();
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+
+                //Busco todos los productos
+                List<Producto> todosLosProductos = productoDAO.getAll();
+                //Por cada producto me fijo si pertenece a la categoria que se pasa como parametro
+
+                for(Producto p: todosLosProductos){
+                    if(p.getCategoria().getNombre().equals(categoria.getNombre())){
+                        resultado.add(p);
+                    }
+                }
             }
-        }
+        };
+        Thread hiloTodosProductos = new Thread(r);
+        hiloTodosProductos.start();
+
+
         //Devuelvo resultado
         return resultado;
     }
