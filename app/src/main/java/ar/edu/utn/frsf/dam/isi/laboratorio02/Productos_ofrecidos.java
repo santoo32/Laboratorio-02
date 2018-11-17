@@ -53,6 +53,7 @@ public class Productos_ofrecidos extends AppCompatActivity {
         cantidad_pedir = (EditText) findViewById(R.id.cantidad_pedir);
 
         final ProductoRepository prodrepos = new ProductoRepository();
+
         i = new Intent();
         agregar.setEnabled(false);
         cantidad_pedir.setEnabled(false);
@@ -120,7 +121,7 @@ public class Productos_ofrecidos extends AppCompatActivity {
                         spinnerCat.setAdapter(categoriasAdapter);
                         spinnerCat.setSelection(0);
 
-                        final ArrayAdapter<Producto> adaptador_prod = new ArrayAdapter<Producto>(getApplicationContext(), android.R.layout.simple_list_item_single_choice, prodrepos.buscarPorCategoria((Categoria)spinnerCat.getItemAtPosition(0)));
+                        final ArrayAdapter<Producto> adaptador_prod = new ArrayAdapter<Producto>(getApplicationContext(), android.R.layout.simple_list_item_single_choice, /*prodrepos.*/MyDatabase.buscarPorCategoria((Categoria)spinnerCat.getItemAtPosition(0)));
                         listprod.setAdapter(adaptador_prod);
 
                         spinnerCat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -133,7 +134,7 @@ public class Productos_ofrecidos extends AppCompatActivity {
                                 listprod.setItemChecked(0, true);
                                 adaptador_prod.notifyDataSetChanged();*/
                                 adaptador_prod.clear();
-                                adaptador_prod.addAll(prodrepos.buscarPorCategoria((Categoria)parent.getItemAtPosition(position)));
+                                adaptador_prod.addAll(/*prodrepos*/MyDatabase.buscarPorCategoria((Categoria)parent.getItemAtPosition(position)));
 
                             }
 

@@ -4,9 +4,12 @@ import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Categoria;
+import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Producto;
 
 public class MyDatabase {
 
@@ -14,6 +17,24 @@ public class MyDatabase {
     private static MyDatabase _INSTANCIA_UNICA=null;
     private Database db;
     private static CategoriaDAO categoriaDAO;
+    private static ProductoDAO productoDAO;
+    private static List<Producto> LISTA_PRODUCTOS = new ArrayList<>();
+    private static List<Categoria> CATEGORIAS_PRODUCTOS;
+    private static boolean FLAG_INICIALIZADO = false;
+
+    //Inicializo los productos
+    private static void inicializar(){
+        int id = 0;
+        Random rand = new Random();
+        CATEGORIAS_PRODUCTOS = categoriaDAO.getAll();
+        for(Categoria cat: CATEGORIAS_PRODUCTOS){
+            for(int i=0;i<25;i++){
+                LISTA_PRODUCTOS.add(new Producto(id++,cat.getNombre()+" 1"+i,"descripcion "+(i*id)+rand.nextInt(100),rand.nextDouble()*500,cat));
+            }
+        }
+        productoDAO.insertAll(LISTA_PRODUCTOS);
+        FLAG_INICIALIZADO=true;
+    }
 
     // metodo static publico que retorna la unica instancia de esta clase
     // si no existe, cosa que ocurre la primera vez que se invoca
@@ -36,11 +57,8 @@ public class MyDatabase {
                 .fallbackToDestructiveMigration()
                 .build();
         categoriaDAO = db.categoriaDAO();
+        productoDAO = db.productoDAO();
 
-    }
-
-    public CategoriaDAO getCategoriaDAO(){
-        return this.categoriaDAO;
     }
 
     public static List<Categoria> getAll() {
@@ -65,5 +83,48 @@ public class MyDatabase {
 
     public static void update(Categoria categoria) {
         categoriaDAO.update(categoria);
+    }
+
+    public static List<Producto> getAllProductos() {
+        return productoDAO.getAll();
+    }
+
+    public static List<Producto> cargarPorIdProductos(int[] productoIds) {
+        return productoDAO.cargarPorId(productoIds);
+    }
+
+    public static Producto cargarPorIdProducto(int productoId) {
+        return productoDAO.cargarPorId(productoId);
+    }
+
+    public static List<Producto> buscarPorCategoria(Categoria categoria) {
+        if(!FLAG_INICIALIZADO) inicializar();
+        List<Producto> resultado = new ArrayList<>();
+        //Busco todos los productos
+        List<Producto> todosLosProductos = productoDAO.getAll();
+        //Por cada producto me fijo si pertenece a la categoria que se pasa como parametro
+        for(int i = 0; i<todosLosProductos.size();i++){
+            if(todosLosProductos.get(i).getCategoria().getId().equals(categoria.getId())){
+                resultado.add(todosLosProductos.get(i));
+            }
+        }
+        //Devuelvo resultado
+        return resultado;
+    }
+
+    public static void insertAllProductos(List<Producto> productos) {
+        productoDAO.insertAll(productos);
+    }
+
+    public static void insertOneProduct(Producto producto) {
+        productoDAO.insertOne(producto);
+    }
+
+    public static void deleteProducto(Producto producto) {
+        productoDAO.delete(producto);
+    }
+
+    public static void updateProducto(Producto producto) {
+        productoDAO.update(producto);
     }
 }

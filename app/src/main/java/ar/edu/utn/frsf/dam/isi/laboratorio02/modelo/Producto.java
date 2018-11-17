@@ -1,14 +1,23 @@
 package ar.edu.utn.frsf.dam.isi.laboratorio02.modelo;
 
+import android.arch.persistence.room.Embedded;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
+
 import java.util.Objects;
 
+@Entity
 public class Producto {
-
+    @PrimaryKey(autoGenerate = true)
     private Integer id;
+
     private String nombre;
     private String descripcion;
     private Double precio;
+    @Embedded(prefix = "cat_")
     private Categoria categoria;
+
 
     public Producto(String nombre, String descripcion, Double precio, Categoria categoria) {
         this.nombre = nombre;
@@ -17,12 +26,14 @@ public class Producto {
         this.categoria = categoria;
     }
 
+    @Ignore
     public Producto(String nombre, Double precio, Categoria categoria) {
         this.nombre = nombre;
         this.precio = precio;
         this.categoria = categoria;
     }
 
+    @Ignore
     public Producto(Integer id, String nombre, String descripcion, Double precio, Categoria categoria) {
         this.id = id;
         this.nombre = nombre;

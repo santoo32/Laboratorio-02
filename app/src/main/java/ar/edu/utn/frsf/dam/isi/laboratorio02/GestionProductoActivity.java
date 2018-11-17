@@ -42,8 +42,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import ar.edu.utn.frsf.dam.isi.laboratorio02.REST.RestClient;
+import ar.edu.utn.frsf.dam.isi.laboratorio02.dao.MyDatabase;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.dao.ProductoRepository;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.dao.ProductoRetrofit;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Categoria;
@@ -73,6 +75,7 @@ public class GestionProductoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_gestion_producto);
         final ProductoRepository prodrepos = new ProductoRepository();
 
+
         flagActualizacion = false;
         opcionNuevoBusqueda = (ToggleButton) findViewById(R.id.abmProductoAltaNuevo);
         idProductoBuscar = (EditText) findViewById(R.id.abmProductoIdBuscar);
@@ -95,6 +98,12 @@ public class GestionProductoActivity extends AppCompatActivity {
         precioProducto.setText("");
         idProductoBuscar.setText("");
 
+        MyDatabase.getInstance(getApplicationContext());
+        final List<Categoria> cats = MyDatabase.getAll();
+        ArrayAdapter<Categoria> categoriasAdapter = new ArrayAdapter<Categoria>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, cats);
+        comboCategorias.setAdapter(categoriasAdapter);
+        comboCategorias.setSelection(0);
+
 
         opcionNuevoBusqueda.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -114,9 +123,27 @@ public class GestionProductoActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Debe completar todos los campos", Toast.LENGTH_LONG).show();
                 } else {
                     Double precio = new Double(precioProducto.getText().toString());
+                    //Si no es una actaualización creo un producto nuevo
+                    if(!flagActualizacion){
 
-                    Producto p = new Producto(nombreProducto.getText().toString(), descProducto.getText().toString(), precio, (Categoria) comboCategorias.getSelectedItem());
-                    ProductoRetrofit clienteRest = RestClient.getInstance().getRetrofit().create(ProductoRetrofit.class);
+                        Producto p = new Producto(nombreProducto.getText().toString(), descProducto.getText().toString(), precio, (Categoria) comboCategorias.getSelectedItem());
+                        //Req 06 Parte 2 taller 4
+                        MyDatabase.getInstance(getApplicationContext());
+                        MyDatabase.insertOneProduct(p);
+                        Toast.makeText(GestionProductoActivity.this,"El producto fue creado",Toast.LENGTH_LONG).show();
+                    }else{
+                        //Obtengo el producto
+                        Producto prodActualizar = MyDatabase.cargarPorIdProducto(Integer.parseInt(idProductoBuscar.getText().toString()));
+                        //Actualizo los datos
+                        prodActualizar.setNombre(nombreProducto.getText().toString());
+                        prodActualizar.setDescripcion(descProducto.getText().toString());
+                        prodActualizar.setPrecio(precio);
+                        prodActualizar.setCategoria((Categoria)comboCategorias.getSelectedItem());
+                        //Guardo el producto actualizado
+                        MyDatabase.updateProducto(prodActualizar);
+                        Toast.makeText(GestionProductoActivity.this,"El producto fue actualizado",Toast.LENGTH_LONG).show();
+                    }
+                    /*ProductoRetrofit clienteRest = RestClient.getInstance().getRetrofit().create(ProductoRetrofit.class);
                     Call<Producto> altaCall = clienteRest.crearProducto(p);
 
                     System.out.println(p);
@@ -138,7 +165,7 @@ public class GestionProductoActivity extends AppCompatActivity {
                         public void onFailure(Call<Producto> call, Throwable t) {
                             Toast.makeText(getApplicationContext(), "Algo salio mal, intente nuevamente mas tarde", Toast.LENGTH_LONG).show();
                         }
-                    });
+                    });*/
                 }
             }
         });
@@ -149,8 +176,15 @@ public class GestionProductoActivity extends AppCompatActivity {
                 if (idProductoBuscar.getText().toString().equals("")) {
                     Toast.makeText(getApplicationContext(), "Debe completar el ID a buscar", Toast.LENGTH_LONG).show();
                 } else {
-                    ProductoRetrofit clienteRest = RestClient.getInstance().getRetrofit().create(ProductoRetrofit.class);
-                    Integer idabuscar = new Integer(idProductoBuscar.getText().toString());
+                    Integer idABuscar = new Integer(idProductoBuscar.getText().toString());
+                    MyDatabase.getInstance(getApplicationContext());
+                    final Producto prodBuscado = MyDatabase.cargarPorIdProducto(idABuscar);
+
+                    nombreProducto.setText(prodBuscado.getNombre());
+                    descProducto.setText(prodBuscado.getDescripcion());
+                    precioProducto.setText(String.valueOf(prodBuscado.getPrecio()));
+                    comboCategorias.setSelection(prodBuscado.getCategoria().getId()-1);
+                    /*ProductoRetrofit clienteRest = RestClient.getInstance().getRetrofit().create(ProductoRetrofit.class);
                     Call<Producto> altaCall = clienteRest.buscarProductoPorId(idabuscar);
 
                     altaCall.enqueue(new Callback<Producto>() {
@@ -167,7 +201,7 @@ public class GestionProductoActivity extends AppCompatActivity {
                         public void onFailure(Call<Producto> call, Throwable t) {
                             Toast.makeText(getApplicationContext(), "Algo salio mal, intente nuevamente mas tarde", Toast.LENGTH_LONG).show();
                         }
-                    });
+                    });*/
                 }
             }
         });
@@ -184,8 +218,22 @@ public class GestionProductoActivity extends AppCompatActivity {
                 if (nombreProducto.getText().toString().equals("") || descProducto.getText().toString().equals("") || precioProducto.getText().toString().equals("")) {
                     Toast.makeText(getApplicationContext(), "Debe buscar un producto primero", Toast.LENGTH_LONG).show();
                 } else {
-                    ProductoRetrofit clienteRest = RestClient.getInstance().getRetrofit().create(ProductoRetrofit.class);
-                    Integer idabuscar = new Integer(idProductoBuscar.getText().toString());
+                    //Busco el producto
+                    Integer idABuscar = new Integer(idProductoBuscar.getText().toString());
+                    MyDatabase.getInstance(getApplicationContext());
+                    Producto prodBorrar = MyDatabase.cargarPorIdProducto(idABuscar);
+                    //Lo borro
+                    MyDatabase.deleteProducto(prodBorrar);
+                    //Seteo los campos del layout
+                    nombreProducto.setText(null);
+                    descProducto.setText(null);
+                    precioProducto.setText(null);
+                    comboCategorias.setSelection(-1);
+                    idProductoBuscar.setText(null);
+
+                    Toast.makeText(GestionProductoActivity.this,"El producto fue eliminado", Toast.LENGTH_LONG).show();
+
+                    /*ProductoRetrofit clienteRest = RestClient.getInstance().getRetrofit().create(ProductoRetrofit.class);
                     Call<Producto> altaCall = clienteRest.borrar(idabuscar);
                     altaCall.enqueue(new Callback<Producto>() {
                         @Override
@@ -201,7 +249,7 @@ public class GestionProductoActivity extends AppCompatActivity {
                         public void onFailure(Call<Producto> call, Throwable t) {
                             Toast.makeText(getApplicationContext(), "Algo salio mal, intente nuevamente mas tarde", Toast.LENGTH_LONG).show();
                         }
-                    });
+                    });*/
                 }
             }
         });
