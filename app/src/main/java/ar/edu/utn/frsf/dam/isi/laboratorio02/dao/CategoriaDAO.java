@@ -16,6 +16,12 @@ public interface CategoriaDAO {
     @Query("SELECT * FROM Categoria")
     List<Categoria> getAll();
 
+    @Query("SELECT Categoria.nombre FROM Categoria")
+    List<String> getAllNombres();
+
+    @Query("SELECT * FROM Categoria WHERE nombre = :nombreCategoria")
+    Categoria getCategoria(String nombreCategoria);
+
     @Query("SELECT * FROM Categoria WHERE id IN (:categoriaId)")
     List<Categoria> cargarPorId(int[] categoriaId);
 

@@ -16,14 +16,19 @@ public interface ProductoDAO {
     @Query("SELECT * FROM Producto")
     List<Producto> getAll();
 
+    @Query("SELECT Producto.nombre FROM Producto")
+    List<String> getAllNombres();
+
     @Query("SELECT * FROM Producto WHERE id IN (:productoId)")
     List<Producto> cargarPorId(int[] productoId);
 
-    @Query("SELECT * FROM Producto WHERE id IN (:productoId)")
-    Producto cargarPorId(int productoId);
+    @Query("SELECT * FROM Producto WHERE Producto.id = :productoId AND Producto.cat_id = :categoriaId")
+    Producto cargarPorId(int productoId, int categoriaId);
 
-    /*@Query("SELECT * FROM Producto WHERE cat_id (:categoriaId)")
-    List<Producto> buscarProductosPorIdCategoria(int categoriaId);*/
+    @Query("SELECT * FROM Producto INNER JOIN Categoria ON Categoria.id = Producto.cat_id WHERE Producto.cat_id = :categoriaId")
+    List<Producto> buscarProductosPorIdCategoria(int categoriaId);
+
+
 
     @Insert
     void insertAll(List<Producto> productos);

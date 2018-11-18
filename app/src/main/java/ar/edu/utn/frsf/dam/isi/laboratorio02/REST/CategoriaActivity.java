@@ -62,15 +62,23 @@ public class CategoriaActivity extends AppCompatActivity {
                         //lab 4 parte 2 - req05
 
                         //Crea la categoria en la db local
-                        MyDatabase.insertOne(cat1);
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(CategoriaActivity.this, "La categoria fue creada", Toast.LENGTH_SHORT).show();
-                                textoCat.setText("");
-                            }
-                        });
+                        if(MyDatabase.insertOne(cat1)){
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(CategoriaActivity.this, "La categoria fue creada", Toast.LENGTH_SHORT).show();
+                                    textoCat.setText("");
+                                    }
+                            });
+                        }else{
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(CategoriaActivity.this, "La categoria ya existe", Toast.LENGTH_SHORT).show();
+                                    textoCat.setText("");
+                                }
+                            });
+                        }
                     }
                 };
                 Thread unHilo = new Thread();

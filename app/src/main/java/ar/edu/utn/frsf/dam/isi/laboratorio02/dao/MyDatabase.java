@@ -21,23 +21,40 @@ public class MyDatabase {
     private static List<Producto> LISTA_PRODUCTOS;
     private static List<Categoria> CATEGORIAS_PRODUCTOS;
     private static boolean FLAG_INICIALIZADO = false;
+    private static List<Producto> resultado;
 
     //Inicializo los productos
     private static void inicializar(){
         int id = 0;
         Random rand = new Random();
-        CATEGORIAS_PRODUCTOS.add(new Categoria(/*1,*/"Entrada"));
-        CATEGORIAS_PRODUCTOS.add(new Categoria(/*2,*/"Plato Principal"));
-        CATEGORIAS_PRODUCTOS.add(new Categoria(/*3,*/"Postre"));
-        CATEGORIAS_PRODUCTOS.add(new Categoria(/*4,*/"Bebida"));
+        CATEGORIAS_PRODUCTOS.add(new Categoria(1,"Entrada"));
+        CATEGORIAS_PRODUCTOS.add(new Categoria(2,"Plato Principal"));
+        CATEGORIAS_PRODUCTOS.add(new Categoria(3,"Postre"));
+        CATEGORIAS_PRODUCTOS.add(new Categoria(4,"Bebida"));
 
         for(Categoria cat: CATEGORIAS_PRODUCTOS){
             for(int i=0;i<5;i++){
-                LISTA_PRODUCTOS.add(new Producto(/*id++,*/cat.getNombre()+" 1"+i,"descripcion "+(i*id++)+rand.nextInt(100),rand.nextDouble()*500,cat));
+                LISTA_PRODUCTOS.add(new Producto(id++,cat.getNombre()+" 1"+i,"descripcion "+(i*id++)+rand.nextInt(100),rand.nextDouble()*500,cat));
             }
         }
-        categoriaDAO.insertAll(CATEGORIAS_PRODUCTOS);
-        productoDAO.insertAll(LISTA_PRODUCTOS);
+
+        Runnable r1 = new Runnable() {
+            @Override
+            public void run() {
+                categoriaDAO.insertAll(CATEGORIAS_PRODUCTOS);
+            }
+        };
+        Thread cargarCategoria = new Thread(r1);
+        cargarCategoria.start();
+
+        Runnable r2 = new Runnable() {
+            @Override
+            public void run() {
+                productoDAO.insertAll(LISTA_PRODUCTOS);
+            }
+        };
+        Thread cargarProducto = new Thread(r2);
+        cargarProducto.start();
         FLAG_INICIALIZADO=true;
     }
 
@@ -69,13 +86,43 @@ public class MyDatabase {
         categoriaDAO = db.categoriaDAO();
         productoDAO = db.productoDAO();
 
-        if(!FLAG_INICIALIZADO) inicializar();
+        /*if(!FLAG_INICIALIZADO){
+            Runnable r1 = new Runnable() {
+                @Override
+                public void run() {
+                    List <Categoria> categoria = categoriaDAO.getAll();
+                    for(Categoria c : categoria){
+                        categoriaDAO.delete(c);
+                    }
+                }
+            };
+            Thread borrarCategoria = new Thread(r1);
+            borrarCategoria.start();
+
+            Runnable r2 = new Runnable() {
+                @Override
+                public void run() {
+                    List <Producto> producto = productoDAO.getAll();
+                    for(Producto p : producto){
+                        productoDAO.delete(p);
+                    }
+                }
+            };
+            Thread borrarProducto = new Thread(r2);
+            borrarProducto.start();
+
+            inicializar();
+        }*/
 
 
     }
 
     public static List<Categoria> getAll() {
         return categoriaDAO.getAll();
+    }
+
+    public static Categoria getCategoria(final String nombreCategoria) {
+        return categoriaDAO.getCategoria(nombreCategoria);
     }
 
     public static List<Categoria> cargarPorId(int[] categoriaIds) {
@@ -86,8 +133,17 @@ public class MyDatabase {
         categoriaDAO.insertAll(categorias);
     }
 
-    public static void insertOne(Categoria categoria) {
-        categoriaDAO.insertOne(categoria);
+    public static boolean insertOne(Categoria categoria) {
+        //Verifico que la categoria que quiero agregar no se encuentre en la bd
+        Boolean b = false;
+        List<String> todoNombresCategorias = categoriaDAO.getAllNombres();
+        if (!todoNombresCategorias.contains(categoria.getNombre())) {
+            categoriaDAO.insertOne(categoria);
+            b = true;
+        }else{
+            b = false;
+        }
+        return b;
     }
 
     public static void delete(Categoria categoria) {
@@ -106,16 +162,17 @@ public class MyDatabase {
         return productoDAO.cargarPorId(productoIds);
     }
 
-    public static Producto cargarPorIdProducto(int productoId) {
-        return productoDAO.cargarPorId(productoId);
+    public static Producto cargarPorIdProducto(int productoId, int categoriaId) {
+        return productoDAO.cargarPorId(productoId, categoriaId);
     }
 
     public static List<Producto> buscarPorCategoria(final Categoria categoria) {
-        final List<Producto> resultado = new ArrayList<>();
+
+
         Runnable r = new Runnable() {
             @Override
             public void run() {
-
+                /*
                 //Busco todos los productos
                 List<Producto> todosLosProductos = productoDAO.getAll();
                 //Por cada producto me fijo si pertenece a la categoria que se pasa como parametro
@@ -124,12 +181,13 @@ public class MyDatabase {
                     if(p.getCategoria().getNombre().equals(categoria.getNombre())){
                         resultado.add(p);
                     }
-                }
+                }*/
+
+                resultado = productoDAO.buscarProductosPorIdCategoria(categoria.getId());
             }
         };
         Thread hiloTodosProductos = new Thread(r);
         hiloTodosProductos.start();
-
 
         //Devuelvo resultado
         return resultado;
@@ -139,8 +197,18 @@ public class MyDatabase {
         productoDAO.insertAll(productos);
     }
 
-    public static void insertOneProduct(Producto producto) {
-        productoDAO.insertOne(producto);
+    public static boolean insertOneProduct(Producto producto) {
+        //Verifico que la categoria que quiero agregar no se encuentre en la bd
+        Boolean b = false;
+        List<String> todoNombresProductos = productoDAO.getAllNombres();
+        if (!todoNombresProductos.contains(producto.getNombre())) {
+            productoDAO.insertOne(producto);
+            b = true;
+        }else{
+            b = false;
+        }
+        return b;
+
     }
 
     public static void deleteProducto(Producto producto) {

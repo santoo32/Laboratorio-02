@@ -146,17 +146,25 @@ public class GestionProductoActivity extends AppCompatActivity {
                                 Producto p = new Producto(nombreProducto.getText().toString(), descProducto.getText().toString(), precio, (Categoria) comboCategorias.getSelectedItem());
                                 //Req 06 Parte 2 taller 4
                                 MyDatabase.getInstance(getApplicationContext());
-                                MyDatabase.insertOneProduct(p);
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(GestionProductoActivity.this,"El producto fue creado",Toast.LENGTH_LONG).show();
-                                    }
-                                });
+                                if(MyDatabase.insertOneProduct(p)){
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(GestionProductoActivity.this,"El producto fue creado",Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                }else{
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(GestionProductoActivity.this,"El producto ya existe",Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                }
                             }else{
 
                                 //Obtengo el producto
-                                Producto prodActualizar = MyDatabase.cargarPorIdProducto(Integer.parseInt(idProductoBuscar.getText().toString()));
+                                Producto prodActualizar = MyDatabase.cargarPorIdProducto(Integer.parseInt(idProductoBuscar.getText().toString()), ((Categoria) comboCategorias.getItemAtPosition(0)).getId());
                                 //Actualizo los datos
                                 prodActualizar.setNombre(nombreProducto.getText().toString());
                                 prodActualizar.setDescripcion(descProducto.getText().toString());
@@ -213,8 +221,10 @@ public class GestionProductoActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             Integer idABuscar = new Integer(idProductoBuscar.getText().toString());
+                            Categoria categoriaSeleccionada = (Categoria) comboCategorias.getItemAtPosition(0);
                             MyDatabase.getInstance(getApplicationContext());
-                            final Producto prodBuscado = MyDatabase.cargarPorIdProducto(idABuscar);
+                            //No devuelve nada!!
+                            final Producto prodBuscado = MyDatabase.cargarPorIdProducto(idABuscar, categoriaSeleccionada.getId());
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -269,7 +279,7 @@ public class GestionProductoActivity extends AppCompatActivity {
                             //Busco el producto
                             Integer idABuscar = new Integer(idProductoBuscar.getText().toString());
                             MyDatabase.getInstance(getApplicationContext());
-                            Producto prodBorrar = MyDatabase.cargarPorIdProducto(idABuscar);
+                            Producto prodBorrar = MyDatabase.cargarPorIdProducto(idABuscar, ((Categoria) comboCategorias.getItemAtPosition(0)).getId());
                             //Lo borro
                             MyDatabase.deleteProducto(prodBorrar);
                             runOnUiThread(new Runnable() {

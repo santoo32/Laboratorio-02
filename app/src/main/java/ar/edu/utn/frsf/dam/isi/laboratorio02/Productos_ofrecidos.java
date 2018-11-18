@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import org.json.JSONException;
 
@@ -37,6 +38,10 @@ public class Productos_ofrecidos extends AppCompatActivity {
     private Intent i;
     private Integer ID;
     private ArrayAdapter<Producto> productosAdapter;
+
+    private Categoria categoriaSeleccionada = new Categoria();
+    private ArrayAdapter<Producto> adaptador_prod;
+    private List<Producto> listProd = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,34 +125,72 @@ public class Productos_ofrecidos extends AppCompatActivity {
                         ArrayAdapter<Categoria> categoriasAdapter = new ArrayAdapter<Categoria>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, cats);
                         spinnerCat.setAdapter(categoriasAdapter);
                         spinnerCat.setSelection(0);
+                        if(spinnerCat.getItemAtPosition(0) != null){
+                            categoriaSeleccionada = (Categoria) spinnerCat.getItemAtPosition(0);
+                            Log.i("CategoriaSelec: ", ((Categoria) spinnerCat.getItemAtPosition(0)).getNombre());
+                            Log.i("IdCategoriaSelec: ", ((Categoria) spinnerCat.getItemAtPosition(0)).getId().toString());
+                        }
+
                     }
                 });
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        final ArrayAdapter<Producto> adaptador_prod = new ArrayAdapter<Producto>(getApplicationContext(), android.R.layout.simple_list_item_single_choice, /*prodrepos.*/MyDatabase.buscarPorCategoria((Categoria)spinnerCat.getItemAtPosition(0)));
-                        listprod.setAdapter(adaptador_prod);
-                        spinnerCat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                            @Override
-                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                                /*ArrayAdapter<Producto> adaptador_prod = new ArrayAdapter<Producto>(getApplicationContext(), android.R.layout.simple_list_item_single_choice, prodrepos.buscarPorCategoria(cats[position]));
-                                adaptador_prod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+
+
+                    //String nombreCategoria = spinnerCat.getItemAtPosition(0).toString();
+                    //final Categoria categoriaSelecionada = MyDatabase.getCategoria(nombreCategoria);
+
+                    //final Categoria categoriaSelecionada = (Categoria) spinnerCat.getItemAtPosition(0);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            Log.i("Campo spinner: ",  categoriaSeleccionada.getNombre());
+                            Log.i("Campo id spinner: ", categoriaSeleccionada.getId().toString());
+
+                            listProd = MyDatabase.buscarPorCategoria(categoriaSeleccionada);
+                            if (listProd != null && listProd.size() != 0){
+                                adaptador_prod = new ArrayAdapter<Producto>(getApplicationContext(), android.R.layout.simple_list_item_single_choice, listProd);
                                 listprod.setAdapter(adaptador_prod);
-                                listprod.setItemChecked(0, true);
-                                adaptador_prod.notifyDataSetChanged();*/
-                                adaptador_prod.clear();
-                                adaptador_prod.addAll(/*prodrepos*/MyDatabase.buscarPorCategoria((Categoria)parent.getItemAtPosition(position)));
-
+                            }else{
+                                Toast.makeText(Productos_ofrecidos.this,"La categoria no dispone de productos",Toast.LENGTH_LONG).show();
                             }
 
-                            @Override
-                            public void onNothingSelected(AdapterView<?> parent) {
+                            spinnerCat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                @Override
+                                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                    //ArrayAdapter<Producto> adaptador_prod = new ArrayAdapter<Producto>(getApplicationContext(), android.R.layout.simple_list_item_single_choice, prodrepos.buscarPorCategoria(cats[position]));
+                                    //adaptador_prod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                    //listprod.setAdapter(adaptador_prod);
+                                    //listprod.setItemChecked(0, true);
+                                    //adaptador_prod.notifyDataSetChanged();
 
-                            }
-                        });
-                    }
-                });
+                                    /*String nombreCategoria = parent.getItemAtPosition(position).toString();
+                                    Categoria catSelec = MyDatabase.getCategoria(nombreCategoria);*/
+                                    categoriaSeleccionada = (Categoria) parent.getItemAtPosition(position);
+                                    listProd = MyDatabase.buscarPorCategoria(categoriaSeleccionada);
+                                    if (listProd != null){
+                                        if(adaptador_prod != null){
+                                            adaptador_prod.clear();
+                                            adaptador_prod.addAll(listProd);
+                                        }else{
+                                            adaptador_prod = new ArrayAdapter<Producto>(getApplicationContext(), android.R.layout.simple_list_item_single_choice, listProd);
+                                        }
+                                    }else{
+                                        Toast.makeText(Productos_ofrecidos.this,"La categoria no dispone de productos",Toast.LENGTH_LONG).show();
+                                    }
+
+                                }
+
+                                @Override
+                                public void onNothingSelected(AdapterView<?> parent) {
+
+                                }
+                            });
+                        }
+                    });
+
             }
 
         };
