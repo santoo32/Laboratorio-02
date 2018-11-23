@@ -21,11 +21,11 @@ public class MyDatabase {
     private static List<Producto> LISTA_PRODUCTOS;
     private static List<Categoria> CATEGORIAS_PRODUCTOS;
     private static boolean FLAG_INICIALIZADO = false;
-    private static List<Producto> resultado;
+    private static List<Producto> resultado = new ArrayList();
 
     //Inicializo los productos
     private static void inicializar(){
-        int id = 0;
+        int id = 1;
         Random rand = new Random();
         CATEGORIAS_PRODUCTOS.add(new Categoria(1,"Entrada"));
         CATEGORIAS_PRODUCTOS.add(new Categoria(2,"Plato Principal"));
@@ -34,9 +34,27 @@ public class MyDatabase {
 
         for(Categoria cat: CATEGORIAS_PRODUCTOS){
             for(int i=0;i<5;i++){
-                LISTA_PRODUCTOS.add(new Producto(id++,cat.getNombre()+" 1"+i,"descripcion "+(i*id++)+rand.nextInt(100),rand.nextDouble()*500,cat));
+                LISTA_PRODUCTOS.add(new Producto(/*id++,*/cat.getNombre()+" 1"+i,"descripcion "+(i*id)+rand.nextInt(100),rand.nextDouble()*500,cat));
+            }
+            id=1;
+        }
+
+        /*List<Categoria> cat = categoriaDAO.getAll();
+        if(cat == null){
+            Log.i("No hay categorias", "Se borró todo");
+        }else{
+            for(Categoria c : cat){
+                Log.i("Nombre categoria: ", c.getNombre());
             }
         }
+        List<Producto> prod = productoDAO.getAll();
+        if(prod == null){
+            Log.i("No hay categorias", "Se borró todo");
+        }else{
+            for(Producto p : prod){
+                Log.i("ID producto: ", p.getId().toString());
+            }
+        }*/
 
         Runnable r1 = new Runnable() {
             @Override
@@ -46,6 +64,14 @@ public class MyDatabase {
         };
         Thread cargarCategoria = new Thread(r1);
         cargarCategoria.start();
+
+        /*for (Producto p: LISTA_PRODUCTOS){
+            Log.i("ID: ", p.getId().toString());
+            Log.i("Nombre: ", p.getNombre());
+            Log.i("CategoriaID: ", p.getCategoria().getId().toString());
+            Log.i(" CategoriaNombre: ", p.getCategoria().getNombre());
+            Log.i("Espacio:","----------------------------------");
+        }*/
 
         Runnable r2 = new Runnable() {
             @Override
@@ -75,7 +101,7 @@ public class MyDatabase {
     // y se invocará UNA Y SOLO UNA VEZ, cuando _INSTANCIA_UNICA sea null
     // luego ya no se invoca nunca más. Nos aseguramos de que haya una
     // sola instancia en toda la aplicacion
-    private MyDatabase(Context ctx){
+    private MyDatabase(Context ctx) {
         db = Room.databaseBuilder(ctx,
                 Database.class, "dbPedidosCasiYa")
                 .fallbackToDestructiveMigration()
@@ -87,34 +113,32 @@ public class MyDatabase {
         productoDAO = db.productoDAO();
 
         /*if(!FLAG_INICIALIZADO){
-            Runnable r1 = new Runnable() {
-                @Override
-                public void run() {
-                    List <Categoria> categoria = categoriaDAO.getAll();
-                    for(Categoria c : categoria){
-                        categoriaDAO.delete(c);
-                    }
-                }
-            };
-            Thread borrarCategoria = new Thread(r1);
-            borrarCategoria.start();
 
             Runnable r2 = new Runnable() {
                 @Override
                 public void run() {
-                    List <Producto> producto = productoDAO.getAll();
-                    for(Producto p : producto){
-                        productoDAO.delete(p);
-                    }
+                    inicializar();
                 }
             };
-            Thread borrarProducto = new Thread(r2);
-            borrarProducto.start();
+            final Thread hiloInicializarTablas = new Thread(r2);
+            //hiloInicializarTablas.start();
 
-            inicializar();
+            Runnable r1 = new Runnable() {
+                @Override
+                public void run() {
+                    borrarTodo();
+
+                    hiloInicializarTablas.start();
+                }
+            };
+            Thread hiloBorrarTablas = new Thread(r1);
+            hiloBorrarTablas.start();
+
         }*/
+    }
 
-
+    public void borrarTodo(){
+        this.db.clearAllTables();
     }
 
     public static List<Categoria> getAll() {
@@ -137,7 +161,7 @@ public class MyDatabase {
         //Verifico que la categoria que quiero agregar no se encuentre en la bd
         Boolean b = false;
         List<String> todoNombresCategorias = categoriaDAO.getAllNombres();
-        if (!todoNombresCategorias.contains(categoria.getNombre())) {
+        if (!todoNombresCategorias.contains(categoria.getNombre()) || todoNombresCategorias == null) {
             categoriaDAO.insertOne(categoria);
             b = true;
         }else{
@@ -168,21 +192,26 @@ public class MyDatabase {
 
     public static List<Producto> buscarPorCategoria(final Categoria categoria) {
 
+        if(resultado == null){
+            Log.i("Resultado nulo","----------");
+        }else{
+            Log.i("Resultado no nulo","----------");
+        }
+        if(productoDAO == null){
+            Log.i("ProductoDAO nulo","----------");
+        }else{
+            Log.i("ProductoDAO no nulo","----------");
+        }
+        if(categoria.getId() == null){
+            Log.i("Categoria nulo","----------");
+        }else{
+            Log.i("Categoria no nulo","----------");
+        }
 
         Runnable r = new Runnable() {
+
             @Override
             public void run() {
-                /*
-                //Busco todos los productos
-                List<Producto> todosLosProductos = productoDAO.getAll();
-                //Por cada producto me fijo si pertenece a la categoria que se pasa como parametro
-
-                for(Producto p: todosLosProductos){
-                    if(p.getCategoria().getNombre().equals(categoria.getNombre())){
-                        resultado.add(p);
-                    }
-                }*/
-
                 resultado = productoDAO.buscarProductosPorIdCategoria(categoria.getId());
             }
         };

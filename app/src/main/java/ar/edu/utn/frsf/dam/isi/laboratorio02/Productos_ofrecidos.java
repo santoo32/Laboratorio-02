@@ -42,6 +42,7 @@ public class Productos_ofrecidos extends AppCompatActivity {
     private Categoria categoriaSeleccionada = new Categoria();
     private ArrayAdapter<Producto> adaptador_prod;
     private List<Producto> listProd = new ArrayList<>();
+    //private List<Producto> listProd1 = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,8 +140,8 @@ public class Productos_ofrecidos extends AppCompatActivity {
 
                     //String nombreCategoria = spinnerCat.getItemAtPosition(0).toString();
                     //final Categoria categoriaSelecionada = MyDatabase.getCategoria(nombreCategoria);
-
                     //final Categoria categoriaSelecionada = (Categoria) spinnerCat.getItemAtPosition(0);
+                    final List<Producto> listProd = MyDatabase.buscarPorCategoria(categoriaSeleccionada);
 
                     runOnUiThread(new Runnable() {
                         @Override
@@ -149,7 +150,7 @@ public class Productos_ofrecidos extends AppCompatActivity {
                             Log.i("Campo spinner: ",  categoriaSeleccionada.getNombre());
                             Log.i("Campo id spinner: ", categoriaSeleccionada.getId().toString());
 
-                            listProd = MyDatabase.buscarPorCategoria(categoriaSeleccionada);
+                            //listProd = MyDatabase.buscarPorCategoria(categoriaSeleccionada);
                             if (listProd != null && listProd.size() != 0){
                                 adaptador_prod = new ArrayAdapter<Producto>(getApplicationContext(), android.R.layout.simple_list_item_single_choice, listProd);
                                 listprod.setAdapter(adaptador_prod);
@@ -169,13 +170,13 @@ public class Productos_ofrecidos extends AppCompatActivity {
                                     /*String nombreCategoria = parent.getItemAtPosition(position).toString();
                                     Categoria catSelec = MyDatabase.getCategoria(nombreCategoria);*/
                                     categoriaSeleccionada = (Categoria) parent.getItemAtPosition(position);
-                                    listProd = MyDatabase.buscarPorCategoria(categoriaSeleccionada);
-                                    if (listProd != null){
+                                    List<Producto> listProd1 = MyDatabase.buscarPorCategoria(categoriaSeleccionada);
+                                    if (listProd1 != null){
                                         if(adaptador_prod != null){
                                             adaptador_prod.clear();
-                                            adaptador_prod.addAll(listProd);
+                                            adaptador_prod.addAll(listProd1);
                                         }else{
-                                            adaptador_prod = new ArrayAdapter<Producto>(getApplicationContext(), android.R.layout.simple_list_item_single_choice, listProd);
+                                            adaptador_prod = new ArrayAdapter<Producto>(getApplicationContext(), android.R.layout.simple_list_item_single_choice, listProd1);
                                         }
                                     }else{
                                         Toast.makeText(Productos_ofrecidos.this,"La categoria no dispone de productos",Toast.LENGTH_LONG).show();
@@ -197,7 +198,7 @@ public class Productos_ofrecidos extends AppCompatActivity {
         Thread hiloCargarComo = new Thread(r);
         hiloCargarComo.start();
 
-        listprod.setSelection(0);
+        //listprod.setSelection(0);
 
         listprod.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
