@@ -21,11 +21,13 @@ public class MyDatabase {
     private static List<Producto> LISTA_PRODUCTOS;
     private static List<Categoria> CATEGORIAS_PRODUCTOS;
     private static boolean FLAG_INICIALIZADO = false;
+
     private static List<Producto> resultado = new ArrayList();
+    private static Boolean hiloTerminado = false;
 
     //Inicializo los productos
     private static void inicializar(){
-        int id = 1;
+        int id = 0;
         Random rand = new Random();
         CATEGORIAS_PRODUCTOS.add(new Categoria(1,"Entrada"));
         CATEGORIAS_PRODUCTOS.add(new Categoria(2,"Plato Principal"));
@@ -34,9 +36,8 @@ public class MyDatabase {
 
         for(Categoria cat: CATEGORIAS_PRODUCTOS){
             for(int i=0;i<5;i++){
-                LISTA_PRODUCTOS.add(new Producto(/*id++,*/cat.getNombre()+" 1"+i,"descripcion "+(i*id)+rand.nextInt(100),rand.nextDouble()*500,cat));
+                LISTA_PRODUCTOS.add(new Producto(id++,cat.getNombre()+" 1"+i,"descripcion "+(i*id)+rand.nextInt(100),rand.nextDouble()*500,cat));
             }
-            id=1;
         }
 
         /*List<Categoria> cat = categoriaDAO.getAll();
@@ -161,6 +162,11 @@ public class MyDatabase {
         //Verifico que la categoria que quiero agregar no se encuentre en la bd
         Boolean b = false;
         List<String> todoNombresCategorias = categoriaDAO.getAllNombres();
+
+        for(int i=0;i<todoNombresCategorias.size();i++){
+            Log.i("Todas las categorias: ",todoNombresCategorias.get(i));
+        }
+
         if (!todoNombresCategorias.contains(categoria.getNombre()) || todoNombresCategorias == null) {
             categoriaDAO.insertOne(categoria);
             b = true;
@@ -186,12 +192,12 @@ public class MyDatabase {
         return productoDAO.cargarPorId(productoIds);
     }
 
-    public static Producto cargarPorIdProducto(int productoId, int categoriaId) {
-        return productoDAO.cargarPorId(productoId, categoriaId);
+    public static Producto cargarPorIdProducto(int productoId) {
+        return productoDAO.cargarProductoId(productoId);
     }
 
     public static List<Producto> buscarPorCategoria(final Categoria categoria) {
-
+        /*
         if(resultado == null){
             Log.i("Resultado nulo","----------");
         }else{
@@ -207,19 +213,35 @@ public class MyDatabase {
         }else{
             Log.i("Categoria no nulo","----------");
         }
+        */
 
         Runnable r = new Runnable() {
 
             @Override
             public void run() {
                 resultado = productoDAO.buscarProductosPorIdCategoria(categoria.getId());
+                hiloTerminado = true;
             }
         };
         Thread hiloTodosProductos = new Thread(r);
         hiloTodosProductos.start();
 
+        /*
+        for(Producto p:resultado){
+            Log.i("Nombre producto: ", p.getNombre());
+            Log.i("ID producto: ", p.getId().toString());
+            Log.i("Espacio: ", "-----------------");
+        }
+        */
+
+        //Un while que espera hasta que termine el hilo
+        while(!hiloTerminado){
+        };
+        //Una vez que termina el hilo devuelve el resultado
+
         //Devuelvo resultado
         return resultado;
+
     }
 
     public static void insertAllProductos(List<Producto> productos) {

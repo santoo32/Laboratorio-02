@@ -21,6 +21,8 @@
             android:layout_height="wrap_content" />
         <EditText
             android:id="@+id/abmProductoIdBuscar"
+            android:inputType="number"
+            android:digits="0123456789"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <Button
@@ -53,6 +55,8 @@
             android:layout_height="wrap_content" />
         <EditText
             android:id="@+id/abmProductoPrecio"
+            android:inputType="numberDecimal"
+            android:digits=".0123456789 "
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <TextView

@@ -26,6 +26,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -122,6 +123,12 @@ public class GestionProductoActivity extends AppCompatActivity {
         opcionNuevoBusqueda.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                //Limpio todos los campos
+                comboCategorias.setSelection(0);
+                nombreProducto.setText("");
+                descProducto.setText("");
+                precioProducto.setText("");
+
                 flagActualizacion = isChecked;
                 btnBuscar.setEnabled(isChecked);
                 btnBorrar.setEnabled(isChecked);
@@ -139,8 +146,10 @@ public class GestionProductoActivity extends AppCompatActivity {
                     Runnable r = new Runnable() {
                         @Override
                         public void run() {
-                            Double precio = new Double(precioProducto.getText().toString());
-                            //Si no es una actaualización creo un producto nuevo
+
+                            Double precio = new Double(precioProducto.getText().toString().trim());
+
+                            //Si no es una actualización creo un producto nuevo
                             if(!flagActualizacion){
 
                                 Producto p = new Producto(nombreProducto.getText().toString(), descProducto.getText().toString(), precio, (Categoria) comboCategorias.getSelectedItem());
@@ -151,6 +160,9 @@ public class GestionProductoActivity extends AppCompatActivity {
                                         @Override
                                         public void run() {
                                             Toast.makeText(GestionProductoActivity.this,"El producto fue creado",Toast.LENGTH_LONG).show();
+                                            nombreProducto.setText("");
+                                            descProducto.setText("");
+                                            precioProducto.setText("");
                                         }
                                     });
                                 }else{
@@ -158,13 +170,17 @@ public class GestionProductoActivity extends AppCompatActivity {
                                         @Override
                                         public void run() {
                                             Toast.makeText(GestionProductoActivity.this,"El producto ya existe",Toast.LENGTH_LONG).show();
+                                            nombreProducto.setText("");
+                                            descProducto.setText("");
+                                            precioProducto.setText("");
                                         }
                                     });
                                 }
+
                             }else{
 
                                 //Obtengo el producto
-                                Producto prodActualizar = MyDatabase.cargarPorIdProducto(Integer.parseInt(idProductoBuscar.getText().toString()), ((Categoria) comboCategorias.getItemAtPosition(0)).getId());
+                                Producto prodActualizar = MyDatabase.cargarPorIdProducto(Integer.parseInt(idProductoBuscar.getText().toString()));
                                 //Actualizo los datos
                                 prodActualizar.setNombre(nombreProducto.getText().toString());
                                 prodActualizar.setDescripcion(descProducto.getText().toString());
@@ -176,6 +192,9 @@ public class GestionProductoActivity extends AppCompatActivity {
                                     @Override
                                     public void run() {
                                         Toast.makeText(GestionProductoActivity.this,"El producto fue actualizado",Toast.LENGTH_LONG).show();
+                                        nombreProducto.setText("");
+                                        descProducto.setText("");
+                                        precioProducto.setText("");
                                     }
                                 });
                             }
@@ -221,19 +240,44 @@ public class GestionProductoActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             Integer idABuscar = new Integer(idProductoBuscar.getText().toString());
-                            Categoria categoriaSeleccionada = (Categoria) comboCategorias.getItemAtPosition(0);
                             MyDatabase.getInstance(getApplicationContext());
+
+
+                            Log.i("----------------","---------------");
+                            Log.i("idABuscar",idABuscar.toString());
+                            Log.i("----------------","---------------");
+                            List<Producto> prod = MyDatabase.getAllProductos();
+                            for(Producto p:prod){
+                                Log.i("Ids productos: ",p.getId().toString());
+                            }/*
+                            for(int i=prod.size()-5;i<prod.size();i++){
+                                Log.i("IdProductos: ",prod.get(i).getId().toString());
+                                Log.i("Nombre: ",prod.get(i).getNombre());
+                                Log.i("Descripcion: ",prod.get(i).getDescripcion());
+                                Log.i("Precio: ",prod.get(i).getPrecio().toString());
+                                Log.i("Categoria: ",prod.get(i).getCategoria().getNombre());
+                            }*/
+
                             //No devuelve nada!!
-                            final Producto prodBuscado = MyDatabase.cargarPorIdProducto(idABuscar, categoriaSeleccionada.getId());
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    nombreProducto.setText(prodBuscado.getNombre());
-                                    descProducto.setText(prodBuscado.getDescripcion());
-                                    precioProducto.setText(String.valueOf(prodBuscado.getPrecio()));
-                                    comboCategorias.setSelection(prodBuscado.getCategoria().getId()-1);
-                                }
-                            });
+                            final Producto prodBuscado = MyDatabase.cargarPorIdProducto(idABuscar);
+                            if(prodBuscado != null){
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        nombreProducto.setText(prodBuscado.getNombre());
+                                        descProducto.setText(prodBuscado.getDescripcion());
+                                        precioProducto.setText(String.valueOf(prodBuscado.getPrecio()));
+                                        comboCategorias.setSelection(prodBuscado.getCategoria().getId()-1);
+                                    }
+                                });
+                            }else{
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(GestionProductoActivity.this, "No hay producto con el id ingresado", Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
                         }
                     };
                     Thread hiloBuscar = new Thread(r);
@@ -279,7 +323,7 @@ public class GestionProductoActivity extends AppCompatActivity {
                             //Busco el producto
                             Integer idABuscar = new Integer(idProductoBuscar.getText().toString());
                             MyDatabase.getInstance(getApplicationContext());
-                            Producto prodBorrar = MyDatabase.cargarPorIdProducto(idABuscar, ((Categoria) comboCategorias.getItemAtPosition(0)).getId());
+                            Producto prodBorrar = MyDatabase.cargarPorIdProducto(idABuscar);
                             //Lo borro
                             MyDatabase.deleteProducto(prodBorrar);
                             runOnUiThread(new Runnable() {

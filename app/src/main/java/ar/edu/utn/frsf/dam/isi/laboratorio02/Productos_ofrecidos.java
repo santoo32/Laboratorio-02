@@ -128,69 +128,72 @@ public class Productos_ofrecidos extends AppCompatActivity {
                         spinnerCat.setSelection(0);
                         if(spinnerCat.getItemAtPosition(0) != null){
                             categoriaSeleccionada = (Categoria) spinnerCat.getItemAtPosition(0);
-                            Log.i("CategoriaSelec: ", ((Categoria) spinnerCat.getItemAtPosition(0)).getNombre());
+                            /*Log.i("CategoriaSelec: ", ((Categoria) spinnerCat.getItemAtPosition(0)).getNombre());
                             Log.i("IdCategoriaSelec: ", ((Categoria) spinnerCat.getItemAtPosition(0)).getId().toString());
+                            Log.i("categoriaSeleccionada: ",  categoriaSeleccionada.getNombre());
+                            Log.i("categoriaSeleccionada: ", categoriaSeleccionada.getId().toString());*/
+                        }
+
+                        List<Producto> listProd = MyDatabase.buscarPorCategoria(categoriaSeleccionada);
+
+                        if (listProd != null && listProd.size() != 0){
+                            adaptador_prod = new ArrayAdapter<Producto>(getApplicationContext(), android.R.layout.simple_list_item_single_choice, listProd);
+                            adaptador_prod.addAll(listProd);
+                            listprod.setAdapter(adaptador_prod);
+
+                        }else{
+                            Toast.makeText(Productos_ofrecidos.this,"La categoria no dispone de productos",Toast.LENGTH_LONG).show();
                         }
 
                     }
                 });
 
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        /*
+                        listProd = MyDatabase.buscarPorCategoria(categoriaSeleccionada);
+                        if (listProd != null && listProd.size() != 0){
+                          adaptador_prod = new ArrayAdapter<Producto>(getApplicationContext(), android.R.layout.simple_list_item_single_choice, listProd);
+                           listprod.setAdapter(adaptador_prod);
+                         }else{
+                            Toast.makeText(Productos_ofrecidos.this,"La categoria no dispone de productos",Toast.LENGTH_LONG).show();
+                         }
+                         */
 
+                        spinnerCat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                            @Override
+                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                //ArrayAdapter<Producto> adaptador_prod = new ArrayAdapter<Producto>(getApplicationContext(), android.R.layout.simple_list_item_single_choice, prodrepos.buscarPorCategoria(cats[position]));
+                                //adaptador_prod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                //listprod.setAdapter(adaptador_prod);
+                                //listprod.setItemChecked(0, true);
+                                //adaptador_prod.notifyDataSetChanged();
 
+                                //String nombreCategoria = parent.getItemAtPosition(position).toString();
+                                //Categoria catSelec = MyDatabase.getCategoria(nombreCategoria);
 
-                    //String nombreCategoria = spinnerCat.getItemAtPosition(0).toString();
-                    //final Categoria categoriaSelecionada = MyDatabase.getCategoria(nombreCategoria);
-                    //final Categoria categoriaSelecionada = (Categoria) spinnerCat.getItemAtPosition(0);
-                    final List<Producto> listProd = MyDatabase.buscarPorCategoria(categoriaSeleccionada);
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            Log.i("Campo spinner: ",  categoriaSeleccionada.getNombre());
-                            Log.i("Campo id spinner: ", categoriaSeleccionada.getId().toString());
-
-                            //listProd = MyDatabase.buscarPorCategoria(categoriaSeleccionada);
-                            if (listProd != null && listProd.size() != 0){
-                                adaptador_prod = new ArrayAdapter<Producto>(getApplicationContext(), android.R.layout.simple_list_item_single_choice, listProd);
-                                listprod.setAdapter(adaptador_prod);
-                            }else{
-                                Toast.makeText(Productos_ofrecidos.this,"La categoria no dispone de productos",Toast.LENGTH_LONG).show();
+                                categoriaSeleccionada = (Categoria) parent.getItemAtPosition(position);
+                                List<Producto> listProd1 = MyDatabase.buscarPorCategoria(categoriaSeleccionada);
+                                if (listProd1 != null) {
+                                    if (adaptador_prod != null) {
+                                        adaptador_prod.clear();
+                                        adaptador_prod.addAll(listProd1);
+                                    } else {
+                                        adaptador_prod = new ArrayAdapter<Producto>(Productos_ofrecidos.this, android.R.layout.simple_list_item_single_choice, listProd1);
+                                    }
+                                } else {
+                                    Toast.makeText(Productos_ofrecidos.this, "La categoria no dispone de productos", Toast.LENGTH_LONG).show();
+                                }
                             }
 
-                            spinnerCat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                                @Override
-                                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                                    //ArrayAdapter<Producto> adaptador_prod = new ArrayAdapter<Producto>(getApplicationContext(), android.R.layout.simple_list_item_single_choice, prodrepos.buscarPorCategoria(cats[position]));
-                                    //adaptador_prod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                                    //listprod.setAdapter(adaptador_prod);
-                                    //listprod.setItemChecked(0, true);
-                                    //adaptador_prod.notifyDataSetChanged();
+                            @Override
+                            public void onNothingSelected(AdapterView<?> parent) {
 
-                                    /*String nombreCategoria = parent.getItemAtPosition(position).toString();
-                                    Categoria catSelec = MyDatabase.getCategoria(nombreCategoria);*/
-                                    categoriaSeleccionada = (Categoria) parent.getItemAtPosition(position);
-                                    List<Producto> listProd1 = MyDatabase.buscarPorCategoria(categoriaSeleccionada);
-                                    if (listProd1 != null){
-                                        if(adaptador_prod != null){
-                                            adaptador_prod.clear();
-                                            adaptador_prod.addAll(listProd1);
-                                        }else{
-                                            adaptador_prod = new ArrayAdapter<Producto>(getApplicationContext(), android.R.layout.simple_list_item_single_choice, listProd1);
-                                        }
-                                    }else{
-                                        Toast.makeText(Productos_ofrecidos.this,"La categoria no dispone de productos",Toast.LENGTH_LONG).show();
-                                    }
-
-                                }
-
-                                @Override
-                                public void onNothingSelected(AdapterView<?> parent) {
-
-                                }
-                            });
-                        }
-                    });
+                            }
+                        });
+                    }
+                });
 
             }
 
@@ -208,6 +211,8 @@ public class Productos_ofrecidos extends AppCompatActivity {
                 Log.d("TAGGGGGG", prod.getNombre());
             }
         });
+
+
         agregar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -218,6 +223,8 @@ public class Productos_ofrecidos extends AppCompatActivity {
                 finish();
             }
         });
+
+
         gestionprod.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
