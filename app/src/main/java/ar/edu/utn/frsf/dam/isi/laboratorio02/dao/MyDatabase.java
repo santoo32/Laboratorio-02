@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Random;
 
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Categoria;
+import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Pedido;
+import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.PedidoDetalle;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Producto;
 
 public class MyDatabase {
@@ -18,6 +20,8 @@ public class MyDatabase {
     private Database db;
     private static CategoriaDAO categoriaDAO;
     private static ProductoDAO productoDAO;
+    private static PedidoDAO pedidoDAO;
+    private static PedidoDetalleDAO pedidoDetalleDAO;
     private static List<Producto> LISTA_PRODUCTOS;
     private static List<Categoria> CATEGORIAS_PRODUCTOS;
     private static boolean FLAG_INICIALIZADO = false;
@@ -112,8 +116,10 @@ public class MyDatabase {
         LISTA_PRODUCTOS = new ArrayList<>();
         categoriaDAO = db.categoriaDAO();
         productoDAO = db.productoDAO();
+        pedidoDAO = db.pedidoDAO();
+        pedidoDetalleDAO = db.pedidoDetalleDAO();
 
-        /*if(!FLAG_INICIALIZADO){
+        if(!FLAG_INICIALIZADO){
 
             Runnable r2 = new Runnable() {
                 @Override
@@ -135,13 +141,17 @@ public class MyDatabase {
             Thread hiloBorrarTablas = new Thread(r1);
             hiloBorrarTablas.start();
 
-        }*/
+        }
+
     }
 
     public void borrarTodo(){
         this.db.clearAllTables();
     }
 
+    //--------------------------------------------------------------------------
+    //                              Categoria
+    //--------------------------------------------------------------------------
     public static List<Categoria> getAll() {
         return categoriaDAO.getAll();
     }
@@ -184,6 +194,9 @@ public class MyDatabase {
         categoriaDAO.update(categoria);
     }
 
+    //--------------------------------------------------------------------------
+    //                              Producto
+    //--------------------------------------------------------------------------
     public static List<Producto> getAllProductos() {
         return productoDAO.getAll();
     }
@@ -197,24 +210,6 @@ public class MyDatabase {
     }
 
     public static List<Producto> buscarPorCategoria(final Categoria categoria) {
-        /*
-        if(resultado == null){
-            Log.i("Resultado nulo","----------");
-        }else{
-            Log.i("Resultado no nulo","----------");
-        }
-        if(productoDAO == null){
-            Log.i("ProductoDAO nulo","----------");
-        }else{
-            Log.i("ProductoDAO no nulo","----------");
-        }
-        if(categoria.getId() == null){
-            Log.i("Categoria nulo","----------");
-        }else{
-            Log.i("Categoria no nulo","----------");
-        }
-        */
-
         Runnable r = new Runnable() {
 
             @Override
@@ -258,8 +253,8 @@ public class MyDatabase {
         }else{
             b = false;
         }
-        return b;
 
+        return b;
     }
 
     public static void deleteProducto(Producto producto) {
@@ -268,5 +263,73 @@ public class MyDatabase {
 
     public static void updateProducto(Producto producto) {
         productoDAO.update(producto);
+    }
+
+    //--------------------------------------------------------------------------
+    //                              Pedido
+    //--------------------------------------------------------------------------
+    public static List<Pedido> getAllPedidos() {
+        return pedidoDAO.getAll();
+    }
+
+    public static List<Pedido> cargarPorIdPedidos(int[] pedidoIds) {
+        return pedidoDAO.cargarPorId(pedidoIds);
+    }
+
+
+    public static Pedido cargarPorIdPedidos(int pedidoId) {
+        return pedidoDAO.cargarPedidoId(pedidoId);
+    }
+
+    public static void insertAllPedidos(List<Pedido> pedidos) {
+        pedidoDAO.insertAll(pedidos);
+    }
+
+    public static void insertOnePedido(Pedido pedido) {
+        pedidoDAO.insertOne(pedido);
+    }
+
+
+    public static void updatePedido(Pedido pedido) {
+        pedidoDAO.update(pedido);
+    }
+
+    public static void updatePedidos(List<Pedido> pedidos) {
+        pedidoDAO.updatePedidos(pedidos);
+    }
+
+    public static void deletePedido(Pedido pedido){
+          pedidoDAO.delete(pedido);
+    }
+
+    //--------------------------------------------------------------------------
+    //                              PedidoDetalle
+    //--------------------------------------------------------------------------
+    public static List<PedidoDetalle> getAllPedidosDetalle() {
+        return pedidoDetalleDAO.getAll();
+    }
+
+    public static List<PedidoDetalle> cargarPorIdPedidosDetalle(int[] pedidoDetalleIds) {
+        return pedidoDetalleDAO.cargarPorId(pedidoDetalleIds);
+    }
+    public static PedidoDetalle cargarPorIdPedidosDetalle(int pedidoDetalleId) {
+        return pedidoDetalleDAO.cargarPedidoDetalleId(pedidoDetalleId);
+    }
+
+    public static void insertAllPedidosDetalles (List<PedidoDetalle> pedidoDetalles) {
+        pedidoDetalleDAO.insertAll(pedidoDetalles);
+    }
+
+    public static void insertOnePedidoDetalle(PedidoDetalle pedidoDetalle) {
+        pedidoDetalleDAO.insertOne(pedidoDetalle);
+    }
+
+
+    public static void updatePedidoDetalle(PedidoDetalle pedidoDetalle) {
+        pedidoDetalleDAO.update(pedidoDetalle);
+    }
+
+    public static void deletePedidoDetalle(PedidoDetalle pedidoDetalle){
+        pedidoDetalleDAO.delete(pedidoDetalle);
     }
 }

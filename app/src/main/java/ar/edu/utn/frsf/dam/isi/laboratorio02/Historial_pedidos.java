@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ar.edu.utn.frsf.dam.isi.laboratorio02.CustomAdapters.AdaptadorFilaHistorial;
+import ar.edu.utn.frsf.dam.isi.laboratorio02.dao.MyDatabase;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.dao.PedidoRepository;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Categoria;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Pedido;
@@ -31,7 +32,8 @@ public class Historial_pedidos extends AppCompatActivity {
     private Button btnnuevo;
     private Button btnmenu;
     private ListView viewpedido;
-    private PedidoRepository repositorioPedido;
+    //private PedidoRepository repositorioPedido;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +44,7 @@ public class Historial_pedidos extends AppCompatActivity {
         btnnuevo = (Button) findViewById(R.id.button_nuevo);
         btnmenu = (Button) findViewById(R.id.button_menu);
         viewpedido = (ListView) findViewById(R.id.ListView1);
-        repositorioPedido = new PedidoRepository();
+        //repositorioPedido = new PedidoRepository();
         viewpedido.setEnabled(true);
 
 
@@ -66,7 +68,7 @@ public class Historial_pedidos extends AppCompatActivity {
 
         //---------Adapter lista de pedidos-------------------------------------------------------------------
 
-        if(repositorioPedido.getLista()==null){
+        /*if(repositorioPedido.getLista()==null){
             viewpedido.setEnabled(false);
         }else{
             viewpedido.setEnabled(true);
@@ -76,11 +78,38 @@ public class Historial_pedidos extends AppCompatActivity {
             customadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             viewpedido.setAdapter(customadapter);
 
-        }
+        }*/
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                MyDatabase.getInstance(getApplicationContext());
+                final List<Pedido> pedidos = MyDatabase.getAllPedidos();
 
-
-
+                if(pedidos == null || pedidos.size()==0){
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            viewpedido.setEnabled(false);
+                            Toast.makeText(Historial_pedidos.this, "No se han realizado pedidos", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }else{
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            viewpedido.setEnabled(true);
+                            AdaptadorFilaHistorial customadapter = new AdaptadorFilaHistorial(getApplicationContext(), pedidos);
+                            customadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            viewpedido.setAdapter(customadapter);
+                        }
+                    });
+                }
+            }
+        };
+        Thread hiloHistorial = new Thread(r);
+        hiloHistorial.start();
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();

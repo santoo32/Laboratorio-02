@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.List;
 
 import ar.edu.utn.frsf.dam.isi.laboratorio02.CustomAdapters.EstadoPedidoReceiver;
+import ar.edu.utn.frsf.dam.isi.laboratorio02.dao.MyDatabase;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.dao.PedidoRepository;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.dao.ProductoRepository;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Pedido;
@@ -39,9 +40,9 @@ import static ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Pedido.Estado.REALIZA
 public class Alta_pedidos extends AppCompatActivity{
 
     private Pedido unPedido;
-    private PedidoRepository repositorioPedido;
+    //private PedidoRepository repositorioPedido;
     private List<PedidoDetalle> detalle;
-    private ProductoRepository repositorioProducto;
+    //private ProductoRepository repositorioProducto;
     private RadioButton retiro_local;
     private RadioButton envio_domicilio;
     private EditText domicilio;
@@ -78,8 +79,8 @@ public class Alta_pedidos extends AppCompatActivity{
         total = (TextView) findViewById(R.id.textView12);
         hacerPedido = (Button) findViewById(R.id.button7);
         volver = (Button) findViewById(R.id.button8);
-        repositorioProducto = new ProductoRepository();
-        repositorioPedido = new PedidoRepository();
+        //repositorioProducto = new ProductoRepository();
+        //repositorioPedido = new PedidoRepository();
         eliminar_prod = (Button) findViewById(R.id.button6);
 
 
@@ -144,8 +145,21 @@ public class Alta_pedidos extends AppCompatActivity{
                 //validarDatos();
                 p1 = new Pedido(c.getTime(), detalle, REALIZADO, domicilio.getText().toString(), mail_contacto.getText().toString(), envio_domicilio.isChecked());
 
+                //Guardo el pedido - req 7 lab4 parte 2
+                Runnable r1 = new Runnable() {
+                    @Override
+                    public void run() {
+                        MyDatabase.getInstance(getApplicationContext());
+                        MyDatabase.insertOnePedido(p1);
+                        //Tengo que guardar también el pedidoDetalle?
+                        MyDatabase.insertAllPedidosDetalles(detalle);
+                    }
+                };
+                Thread hiloGuardarPedido = new Thread(r1);
+                hiloGuardarPedido.start();
+
                 //punto i.iv
-                repositorioPedido.guardarPedido(p1);
+                //repositorioPedido.guardarPedido(p1);
 
                 //Etapa 3 parte 2
                 br = new EstadoPedidoReceiver();
@@ -167,32 +181,44 @@ public class Alta_pedidos extends AppCompatActivity{
                         }
 
                         // buscar pedidos no aceptados y aceptarlos automáticamente
-                        List<Pedido> lista = repositorioPedido.getLista();
+                        //List<Pedido> lista = repositorioPedido.getLista();
+                        List<Pedido> lista = MyDatabase.getAllPedidos();
+                        boolean hayCambios = false;
+
                         for (Pedido p : lista) {
-                            if (p.getEstado().equals(Pedido.Estado.REALIZADO))
+                            if (p.getEstado().equals(Pedido.Estado.REALIZADO)){
+
                                 p.setEstado(Pedido.Estado.ACEPTADO);
+
+                                //Por cada producto que cambio de estado llamo al receiver
+                                Log.i("id pasado al reciver ", p.getId().toString());
+
+                                i.putExtra("idPedido",p.getId());
+                                i.setAction(EstadoPedidoReceiver.ESTADO_ACEPTADO);
+                                sendBroadcast(i);
+
+                                hayCambios = true;
+                            }
                         }
 
-                        i.putExtra("idPedido",p1.getId());
-                        i.setAction(EstadoPedidoReceiver.ESTADO_ACEPTADO);
-                        sendBroadcast(i);
+                        //Si hay cambios
+                        if(hayCambios){
+                            //Actualizo los pedidos en la BD
+                            MyDatabase.updatePedidos(lista);
+                        }
 
-
+                        /*
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                //Toast.makeText(Alta_pedidos.this, "Informacion de pedidos actualizada!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Alta_pedidos.this, "Informacion de pedidos actualizada!", Toast.LENGTH_SHORT).show();
                             }
                         });
-
-
-
+                        */
                     }
                 };
                 Thread unHilo = new Thread();
                 new Thread(r , ("unHilo")).start();
-
-
 
                 finish();
             }
@@ -211,7 +237,6 @@ public class Alta_pedidos extends AppCompatActivity{
 
     private void validarDatos() {
 
-
     }
 
     @Override
@@ -220,11 +245,20 @@ public class Alta_pedidos extends AppCompatActivity{
 
         super.onActivityResult(requestCode, resultCode, data);
                 Bundle extras = data.getExtras();
-                Integer ID = (Integer) extras.get("idProducto");
-                Integer cantidad = (Integer) extras.get("cantidad");
+                final Integer ID = (Integer) extras.get("idProducto");
+                final Integer cantidad = (Integer) extras.get("cantidad");
 
-                PedidoDetalle d = new PedidoDetalle(cantidad, repositorioProducto.buscarPorId(ID));
-                detalle.add(d);
+                //PedidoDetalle d = new PedidoDetalle(cantidad, repositorioProducto.buscarPorId(ID));
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    PedidoDetalle d = new PedidoDetalle(cantidad, MyDatabase.cargarPorIdProducto(ID));
+                    detalle.add(d);
+                }
+            };
+            Thread crearPedidoDetalle = new Thread(r);
+            crearPedidoDetalle.start();
+
 
                 //item iv)
                 Double costo = calcularCosto(detalle);
@@ -266,7 +300,6 @@ public class Alta_pedidos extends AppCompatActivity{
             costo += detalle.get(i).getProducto().getPrecio() * detalle.get(i).getCantidad();
 
         }
-
 
         return costo;
     }
