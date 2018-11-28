@@ -123,9 +123,20 @@ public class Alta_pedidos extends AppCompatActivity{
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 PedidoDetalle eliminar = (PedidoDetalle) adapterView.getItemAtPosition(i);
-                ID = eliminar.getId();
+
+                System.out.println("Id del pedidoDetalle que estoy seleccionando: "+ eliminar.getId());
+                System.out.println("Cantidad de pedidosDetalles antes de eliminar: "+detalle);
+
+                //Actualizo el adapter
                 adapter.remove((PedidoDetalle) adapterView.getItemAtPosition(i));
                 adapter.notifyDataSetChanged();
+
+                //Elimino de la lista de PedidosDetalles el detalle eliminado
+                detalle.remove(eliminar);
+
+                System.out.println("Cantidad de pedidosDetalles después de eliminar: "+detalle);
+
+                //Calculo nuevamente el costo
                 Double costo = calcularCosto(detalle);
                 total.setText(" Total Pedido: " + costo.toString());
             }
@@ -150,9 +161,30 @@ public class Alta_pedidos extends AppCompatActivity{
                     @Override
                     public void run() {
                         MyDatabase.getInstance(getApplicationContext());
-                        MyDatabase.insertOnePedido(p1);
-                        //Tengo que guardar también el pedidoDetalle?
+                        //Almaceno el id  del producto recién guardado
+                        Integer idPedidoGuardado = (int) MyDatabase.insertOnePedido(p1);
+
+                        //Setear el id del pedido recién guardado al pedido en memoria
+                        p1.setId(idPedidoGuardado);
+
+                        //Seteo el pedido a cada PedidoDetalle
+                        for(PedidoDetalle pd : detalle){
+                            pd.setPedido(p1);
+                        }
+
+                        Log.i("Cantidad de detalles: ", String.valueOf(detalle.size()));
+                        for(PedidoDetalle d : detalle){
+                            Log.i("Datos idPedidoDetalle: ", d.getId().toString());
+                            Log.i("Datos idPedido: ", d.getPedido().getId().toString());
+                            System.out.println(d.getPedido());
+                            Log.i("-------------------","---------------------------");
+                        }
+
+                        //guardo el pedidoDetalle
                         MyDatabase.insertAllPedidosDetalles(detalle);
+                        /*for(PedidoDetalle pd : detalle){
+                            MyDatabase.insertOnePedidoDetalle(pd);
+                        }*/
                     }
                 };
                 Thread hiloGuardarPedido = new Thread(r1);
@@ -168,7 +200,12 @@ public class Alta_pedidos extends AppCompatActivity{
                 getApplication().getApplicationContext().registerReceiver(br, filtro);
                 final Intent i = new Intent();
 
-
+                //Espero que hilo que guarda los datos termine para poder continuar...
+                try {
+                    hiloGuardarPedido.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
                 //Etapa 3 parte 1
                 Runnable r = new Runnable() {
@@ -217,8 +254,15 @@ public class Alta_pedidos extends AppCompatActivity{
                         */
                     }
                 };
-                Thread unHilo = new Thread();
-                new Thread(r , ("unHilo")).start();
+                Thread unHilo = new Thread(r);
+                unHilo.start();
+
+                //Espero que se termine de ejecutar unHilo para poder continuar.
+                try {
+                    unHilo.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
                 finish();
             }
@@ -244,40 +288,41 @@ public class Alta_pedidos extends AppCompatActivity{
        //punto h
 
         super.onActivityResult(requestCode, resultCode, data);
-                Bundle extras = data.getExtras();
-                final Integer ID = (Integer) extras.get("idProducto");
-                final Integer cantidad = (Integer) extras.get("cantidad");
+        Bundle extras = data.getExtras();
+        final Integer ID = (Integer) extras.get("idProducto");
+        final Integer cantidad = (Integer) extras.get("cantidad");
 
-                //PedidoDetalle d = new PedidoDetalle(cantidad, repositorioProducto.buscarPorId(ID));
-            Runnable r = new Runnable() {
-                @Override
-                public void run() {
-                    PedidoDetalle d = new PedidoDetalle(cantidad, MyDatabase.cargarPorIdProducto(ID));
-                    detalle.add(d);
-                }
-            };
-            Thread crearPedidoDetalle = new Thread(r);
-            crearPedidoDetalle.start();
+        //PedidoDetalle d = new PedidoDetalle(cantidad, repositorioProducto.buscarPorId(ID));
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                PedidoDetalle d = new PedidoDetalle(cantidad, MyDatabase.cargarPorIdProducto(ID));
+                detalle.add(d);
+            }
+        };
+        Thread crearPedidoDetalle = new Thread(r);
+        crearPedidoDetalle.start();
 
-
-                //item iv)
-                Double costo = calcularCosto(detalle);
-                total.setText(" Total Pedido: " + costo.toString());
-                if(detalle==null){
-                    lista_detalle.setEnabled(false);
-                 }else {
-                    lista_detalle.setEnabled(true);
-                    adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_single_choice, detalle);
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    lista_detalle.setAdapter(adapter);
-                    lista_detalle.setItemChecked(0, true );
-                }
-                //item v)
-                adapter.setNotifyOnChange(true);
-
-
-
-
+        //Espero a que termine de agregar el producto para poder calcular el costo
+        try {
+            crearPedidoDetalle.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        //item iv)
+        Double costo = calcularCosto(detalle);
+        total.setText(" Total Pedido: " + costo.toString());
+        if(detalle==null){
+            lista_detalle.setEnabled(false);
+        }else {
+            lista_detalle.setEnabled(true);
+            adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_single_choice, detalle);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            lista_detalle.setAdapter(adapter);
+            lista_detalle.setItemChecked(0, true );
+        }
+        //item v)
+        adapter.setNotifyOnChange(true);
     }
 
     private void asignarDatos (){

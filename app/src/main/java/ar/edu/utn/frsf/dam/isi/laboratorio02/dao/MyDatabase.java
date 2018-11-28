@@ -44,23 +44,6 @@ public class MyDatabase {
             }
         }
 
-        /*List<Categoria> cat = categoriaDAO.getAll();
-        if(cat == null){
-            Log.i("No hay categorias", "Se borró todo");
-        }else{
-            for(Categoria c : cat){
-                Log.i("Nombre categoria: ", c.getNombre());
-            }
-        }
-        List<Producto> prod = productoDAO.getAll();
-        if(prod == null){
-            Log.i("No hay categorias", "Se borró todo");
-        }else{
-            for(Producto p : prod){
-                Log.i("ID producto: ", p.getId().toString());
-            }
-        }*/
-
         Runnable r1 = new Runnable() {
             @Override
             public void run() {
@@ -118,7 +101,7 @@ public class MyDatabase {
         productoDAO = db.productoDAO();
         pedidoDAO = db.pedidoDAO();
         pedidoDetalleDAO = db.pedidoDetalleDAO();
-
+        /*
         if(!FLAG_INICIALIZADO){
 
             Runnable r2 = new Runnable() {
@@ -141,7 +124,7 @@ public class MyDatabase {
             Thread hiloBorrarTablas = new Thread(r1);
             hiloBorrarTablas.start();
 
-        }
+        }*/
 
     }
 
@@ -215,7 +198,7 @@ public class MyDatabase {
             @Override
             public void run() {
                 resultado = productoDAO.buscarProductosPorIdCategoria(categoria.getId());
-                hiloTerminado = true;
+                //hiloTerminado = true;
             }
         };
         Thread hiloTodosProductos = new Thread(r);
@@ -229,9 +212,12 @@ public class MyDatabase {
         }
         */
 
-        //Un while que espera hasta que termine el hilo
-        while(!hiloTerminado){
-        };
+        //Espero hasta que termine el hilo
+        try {
+            hiloTodosProductos.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         //Una vez que termina el hilo devuelve el resultado
 
         //Devuelvo resultado
@@ -285,8 +271,8 @@ public class MyDatabase {
         pedidoDAO.insertAll(pedidos);
     }
 
-    public static void insertOnePedido(Pedido pedido) {
-        pedidoDAO.insertOne(pedido);
+    public static long insertOnePedido(Pedido pedido) {
+        return pedidoDAO.insertOne(pedido);
     }
 
 
@@ -301,6 +287,10 @@ public class MyDatabase {
     public static void deletePedido(Pedido pedido){
           pedidoDAO.delete(pedido);
     }
+    /*
+    public static Integer obtenerIdPedido(Pedido p){
+        return pedidoDAO.obtenerIdPedido(p);
+    }*/
 
     //--------------------------------------------------------------------------
     //                              PedidoDetalle

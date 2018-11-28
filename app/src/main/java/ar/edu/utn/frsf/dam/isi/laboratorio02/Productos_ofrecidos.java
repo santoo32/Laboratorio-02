@@ -65,6 +65,7 @@ public class Productos_ofrecidos extends AppCompatActivity {
         agregar.setEnabled(false);
         cantidad_pedir.setEnabled(false);
 
+
         //--------Analizando si se reciben datos en el Intent---------------------
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -134,87 +135,15 @@ public class Productos_ofrecidos extends AppCompatActivity {
                             categoriaSeleccionada = (Categoria) spinnerCat.getItemAtPosition(0);
                         }
 
-                        spinnerCat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                            @Override
-                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                                categoriaSeleccionada = (Categoria) parent.getItemAtPosition(position);
-                                List<Producto> listProd = MyDatabase.buscarPorCategoria(categoriaSeleccionada);
-
-                                if (listProd != null) {
-                                    adaptador_prod = new ArrayAdapter<Producto>(getApplicationContext(), android.R.layout.simple_list_item_single_choice, listProd);
-                                    adaptador_prod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                                    listprod.setAdapter(adaptador_prod);
-                                    listprod.setItemChecked(0, true );
-                                } else {
-                                    Toast.makeText(Productos_ofrecidos.this, "La categoria no dispone de productos", Toast.LENGTH_LONG).show();
-                                }
-                            }
-
-                            @Override
-                            public void onNothingSelected(AdapterView<?> parent) {
-
-                            }
-                        });
+                        spinnerCat.setOnItemSelectedListener(listenerDeListaCat);
                     }
                 });
-                /*
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        listProd = MyDatabase.buscarPorCategoria(categoriaSeleccionada);
-                        if (listProd != null && listProd.size() != 0){
-                          adaptador_prod = new ArrayAdapter<Producto>(getApplicationContext(), android.R.layout.simple_list_item_single_choice, listProd);
-                           listprod.setAdapter(adaptador_prod);
-                         }else{
-                            Toast.makeText(Productos_ofrecidos.this,"La categoria no dispone de productos",Toast.LENGTH_LONG).show();
-                         }
-
-                         spinnerCat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                            @Override
-                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                                //ArrayAdapter<Producto> adaptador_prod = new ArrayAdapter<Producto>(getApplicationContext(), android.R.layout.simple_list_item_single_choice, prodrepos.buscarPorCategoria(cats[position]));
-                                //adaptador_prod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                                //listprod.setAdapter(adaptador_prod);
-                                //listprod.setItemChecked(0, true);
-                                //adaptador_prod.notifyDataSetChanged();
-
-                                //String nombreCategoria = parent.getItemAtPosition(position).toString();
-                                //Categoria catSelec = MyDatabase.getCategoria(nombreCategoria);
-
-                                categoriaSeleccionada = (Categoria) parent.getItemAtPosition(position);
-                                List<Producto> listProd = MyDatabase.buscarPorCategoria(categoriaSeleccionada);
-
-                                if (listProd != null) {
-                                    //adaptador_prod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                                    //listprod.setAdapter(adaptador_prod);
-                                    //listprod.setItemChecked(0, true );
-                                    if (adaptador_prod != null) {
-                                        adaptador_prod.clear();
-                                        adaptador_prod.addAll(listProd);
-                                    } else {
-                                        adaptador_prod = new ArrayAdapter<Producto>(Productos_ofrecidos.this, android.R.layout.simple_list_item_single_choice, listProd);
-                                    }
-                                } else {
-                                    Toast.makeText(Productos_ofrecidos.this, "La categoria no dispone de productos", Toast.LENGTH_LONG).show();
-                                }
-                            }
-
-                            @Override
-                            public void onNothingSelected(AdapterView<?> parent) {
-
-                            }
-                        });
-                    }
-                });*/
-
             }
 
         };
         Thread hiloCargarComo = new Thread(r);
         hiloCargarComo.start();
 
-        //listprod.setSelection(0);
 
         listprod.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -229,11 +158,14 @@ public class Productos_ofrecidos extends AppCompatActivity {
         agregar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int cant = Integer.parseInt(cantidad_pedir.getText().toString());
-                i.putExtra("cantidad", cant);
-                i.putExtra("idProducto", ID);
-                setResult(Activity.RESULT_OK, i);
-                finish();
+                //Verifico que se ingrese cantidad
+                if(!cantidad_pedir.getText().toString().isEmpty() && !cantidad_pedir.getText().toString().equals("0")){
+                    int cant = Integer.parseInt(cantidad_pedir.getText().toString());
+                    i.putExtra("cantidad", cant);
+                    i.putExtra("idProducto", ID);
+                    setResult(Activity.RESULT_OK, i);
+                    finish();
+                }
             }
         });
 
@@ -245,9 +177,28 @@ public class Productos_ofrecidos extends AppCompatActivity {
                 startActivity(i);
             }
         });
-
-
     }
 
+    AdapterView.OnItemSelectedListener listenerDeListaCat = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            categoriaSeleccionada = (Categoria) parent.getItemAtPosition(position);
+            List<Producto> listProd = MyDatabase.buscarPorCategoria(categoriaSeleccionada);
+
+            if (listProd != null) {
+                adaptador_prod = new ArrayAdapter<Producto>(getApplicationContext(), android.R.layout.simple_list_item_single_choice, listProd);
+                adaptador_prod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                listprod.setAdapter(adaptador_prod);
+                listprod.setItemChecked(0, true );
+            } else {
+                Toast.makeText(Productos_ofrecidos.this, "La categoria no dispone de productos", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
 
 }

@@ -8,6 +8,7 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
+import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.PedidoConDetalles;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.PedidoDetalle;
 
 @Dao
@@ -21,6 +22,10 @@ public interface PedidoDetalleDAO {
 
     @Query("SELECT * FROM PedidoDetalle WHERE PedidoDetalle.id = :pedidoDetalleID ")
     PedidoDetalle cargarPedidoDetalleId(int pedidoDetalleID);
+
+
+    @Query("SELECT * FROM PedidoDetalle WHERE PedidoDetalle.ped_id = :IdPedido")
+    List<PedidoConDetalles> buscarDetalleporIdPedido(int IdPedido);
 
     @Insert
     void insertAll(List<PedidoDetalle> pedidosDetalles);

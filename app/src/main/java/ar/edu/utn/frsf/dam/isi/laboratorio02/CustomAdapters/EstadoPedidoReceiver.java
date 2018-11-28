@@ -32,7 +32,7 @@ public class EstadoPedidoReceiver extends BroadcastReceiver {
 
         Bundle extras = intent.getExtras();
         //Me devuelve que el id es 0
-        final Integer id = extras.getInt("id_pedido");
+        final Integer id = extras.getInt("idPedido");
         //p1 = new PedidoRepository();
         //Pedido ped;
         MyDatabase.getInstance(context);
