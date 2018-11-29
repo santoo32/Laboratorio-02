@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ar.edu.utn.frsf.dam.isi.laboratorio02.Alta_pedidos;
@@ -28,6 +29,8 @@ import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.PedidoDetalle;
 public class AdaptadorFilaHistorial extends ArrayAdapter<Pedido> implements View.OnClickListener{
     private Context ctx;
     private List<Pedido> datos;
+    private List<PedidoDetalle> detalleDePedidos = new ArrayList<>();
+
     private int lastPosition = -1;
 
 
@@ -39,9 +42,25 @@ public class AdaptadorFilaHistorial extends ArrayAdapter<Pedido> implements View
 
     public View getView(final int position, View convertView, ViewGroup parent) {
 
-        Pedido dataModel = getItem(position);
+        final Pedido dataModel = getItem(position);
 
-        PedidoHolder viewHolder;
+        MyDatabase.getInstance(ctx);
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                detalleDePedidos = MyDatabase.buscarTodosLosDetalleDeUnPedido(dataModel.getId());
+            }
+        };
+        Thread hiloCargarDetalles = new Thread(r);
+        hiloCargarDetalles.start();
+
+        try {
+            hiloCargarDetalles.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        final PedidoHolder viewHolder;
 
         final View result;
 
@@ -64,10 +83,16 @@ public class AdaptadorFilaHistorial extends ArrayAdapter<Pedido> implements View
                 @Override
                 public void onClick(View v) {
 
-                    int indice = (int) v.getTag();
+                    System.out.println("v.getTag: "+v.getTag());
+                    System.out.println("position: "+position);
 
-                    MyDatabase.getInstance(ctx);
-                    final Pedido pedidoSeleccionado = datos.get(indice);
+                    //int indice = (int) v.getTag();
+
+                    final Pedido pedidoSeleccionado = datos.get(position/*indice*/);
+                    //final Pedido pedidoSeleccionado = dataModel;
+
+                    System.out.println(pedidoSeleccionado);
+                    System.out.println(pedidoSeleccionado.getId());
 
 
                     if( pedidoSeleccionado.getEstado().equals(Pedido.Estado.REALIZADO)|| pedidoSeleccionado.getEstado().equals(Pedido.Estado.ACEPTADO)/*|| pedidoSeleccionado.getEstado().equals(Pedido.Estado.EN_PREPARACION)*/){
@@ -80,13 +105,13 @@ public class AdaptadorFilaHistorial extends ArrayAdapter<Pedido> implements View
                                 MyDatabase.updatePedido(pedidoSeleccionado);
 
                                 //Tengo que actualizar todos los pedidos detalles del producto cancelado
-                                List<PedidoDetalle> pedidoDetalle = MyDatabase.getPedidoDetallesDeProducto(pedidoSeleccionado.getId());
+                                //List<PedidoDetalle> pedidoDetalle = MyDatabase.getPedidoDetallesDeProducto(pedidoSeleccionado.getId());
 
-                                for(PedidoDetalle pedDet : pedidoDetalle){
+                                for(PedidoDetalle pedDet : detalleDePedidos/*pedidoDetalle*/){
                                     pedDet.setPedido(pedidoSeleccionado);
                                 }
 
-                                MyDatabase.updatePedidoDetalleAll(pedidoDetalle);
+                                MyDatabase.updatePedidoDetalleAll(detalleDePedidos/*pedidoDetalle*/);
                             }
                         };
                         Thread hiloCancelarPedido = new Thread(r);
@@ -98,7 +123,6 @@ public class AdaptadorFilaHistorial extends ArrayAdapter<Pedido> implements View
                             e.printStackTrace();
                         }
                     }
-
                     return;
                 }
             });
@@ -126,11 +150,11 @@ public class AdaptadorFilaHistorial extends ArrayAdapter<Pedido> implements View
         lastPosition = position;
 
 
-        Double costo = calcularCosto(dataModel.getDetalle());
+        Double costo = calcularCosto(detalleDePedidos/*dataModel.getDetalle()*/);
         viewHolder.contacto.setText("Contacto: " + dataModel.getMailContacto());
         viewHolder.fecha_entrega.setText("Fecha de entrega: " + dataModel.getFecha().toString());
         viewHolder.imageview.setTag(position);
-        viewHolder.items.setText("Items: " + dataModel.getDetalle().size());
+        viewHolder.items.setText("Items: " + detalleDePedidos.size()/*dataModel.getDetalle().size()*/);
         viewHolder.pagar.setText("Costo: " + costo);
 
 

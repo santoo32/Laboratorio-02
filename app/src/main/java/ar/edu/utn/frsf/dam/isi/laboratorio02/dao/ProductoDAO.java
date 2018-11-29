@@ -25,12 +25,8 @@ public interface ProductoDAO {
     @Query("SELECT * FROM Producto WHERE Producto.id = :productoId ")
     Producto cargarProductoId(int productoId);
 
-    @Query("SELECT * FROM Producto INNER JOIN Categoria ON Categoria.id = Producto.cat_id WHERE Producto.cat_id = :categoriaId")
+    @Query("SELECT * FROM Producto WHERE Producto.cat_id = :categoriaId")
     List<Producto> buscarProductosPorIdCategoria(int categoriaId);
-
-    @Query("SELECT * FROM Producto INNER JOIN Categoria ON Categoria.id = Producto.cat_id" +
-            " WHERE Producto.nombre = :nombre AND Producto.precio = :precio AND Producto.cat_nombre = :nombreCate")
-    Producto buscarProducto(String nombre, Double precio, String nombreCate);
 
     @Insert
     void insertAll(List<Producto> productos);

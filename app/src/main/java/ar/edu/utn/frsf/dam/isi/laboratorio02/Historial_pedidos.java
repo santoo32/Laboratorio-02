@@ -85,6 +85,11 @@ public class Historial_pedidos extends AppCompatActivity {
                 MyDatabase.getInstance(getApplicationContext());
                 final List<Pedido> pedidos = MyDatabase.getAllPedidos();
 
+                System.out.println(pedidos);
+                for(Pedido p:pedidos){
+                    System.out.println(p.getId());
+                }
+
                 if(pedidos == null || pedidos.size()==0){
                     runOnUiThread(new Runnable() {
                         @Override

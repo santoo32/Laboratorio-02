@@ -21,6 +21,8 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -152,106 +154,86 @@ public class Alta_pedidos extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 Calendar c = Calendar.getInstance();
-                //punto i
-                //validarDatos();
-                p1 = new Pedido(c.getTime(), detalle, REALIZADO, domicilio.getText().toString(), mail_contacto.getText().toString(), envio_domicilio.isChecked());
 
-                //Guardo el pedido - req 7 lab4 parte 2
-                Runnable r1 = new Runnable() {
-                    @Override
-                    public void run() {
-                        MyDatabase.getInstance(getApplicationContext());
-                        //Almaceno el id  del producto recién guardado
-                        Integer idPedidoGuardado = (int) MyDatabase.insertOnePedido(p1);
+                //Si agrego algún producto al pedido
+                if(detalle.size() != 0){
+                    //punto i
+                    //validarDatos();
+                    p1 = new Pedido(c.getTime(), detalle, REALIZADO, domicilio.getText().toString(), mail_contacto.getText().toString(), envio_domicilio.isChecked());
 
-                        //Setear el id del pedido recién guardado al pedido en memoria
-                        p1.setId(idPedidoGuardado);
+                    //Guardo el pedido - req 7 lab4 parte 2
+                    Runnable r1 = new Runnable() {
+                        @Override
+                        public void run() {
+                            MyDatabase.getInstance(getApplicationContext());
+                            //Almaceno el id  del producto recién guardado
+                            Integer idPedidoGuardado = (int) MyDatabase.insertOnePedido(p1);
 
-                        //Seteo el pedido a cada PedidoDetalle
-                        for(PedidoDetalle pd : detalle){
-                            pd.setPedido(p1);
-                        }
+                            //Setear el id del pedido recién guardado al pedido en memoria
+                            p1.setId(idPedidoGuardado);
 
-                        /*
-                        Log.i("Cantidad de detalles: ", String.valueOf(detalle.size()));
-                        for(PedidoDetalle d : detalle){
-                            System.out.println(d.getCantidad());
-                            System.out.println(d.getProducto());
-                            System.out.println(d.getPedido());
-                            Log.i("-------------------","---------------------------");
-                        }*/
-
-                        //guardo el pedidoDetalle
-                        MyDatabase.insertAllPedidosDetalles(detalle);
-
-                        /*
-                        List<PedidoDetalle> pedDet = new ArrayList<>();
-                        pedDet = MyDatabase.getAllPedidosDetalle();
-                        if(pedDet != null && pedDet.size()!= 0){
-                            System.out.println("Cantidad de detalles guardados: "+ pedDet.size());
-                            for(PedidoDetalle d : pedDet){
-                                System.out.println("Datos pedidoDetalle guardados: "+d);
-                                Log.i("-------------------","---------------------------");
+                            //Seteo el pedido a cada PedidoDetalle
+                            for(PedidoDetalle pd : detalle){
+                                pd.setPedido(p1);
                             }
-                        }else{
-                            Toast.makeText(Alta_pedidos.this, "No guarda el pedidoDetalle", Toast.LENGTH_SHORT).show();
 
-                        }*/
+                            //guardo el pedidoDetalle
+                            MyDatabase.insertAllPedidosDetalles(detalle);
+                        }
+                    };
+                    Thread hiloGuardarPedido = new Thread(r1);
+                    hiloGuardarPedido.start();
+
+                    //punto i.iv
+                    //repositorioPedido.guardarPedido(p1);
+
+                    //Etapa 3 parte 2
+                    br = new EstadoPedidoReceiver();
+                    filtro = new IntentFilter();
+                    filtro.addAction(EstadoPedidoReceiver.ESTADO_ACEPTADO);
+                    getApplication().getApplicationContext().registerReceiver(br, filtro);
+                    final Intent i = new Intent();
+
+                    //Espero que hilo que guarda los datos termine para poder continuar...
+                    try {
+                        hiloGuardarPedido.join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                };
-                Thread hiloGuardarPedido = new Thread(r1);
-                hiloGuardarPedido.start();
 
-                //punto i.iv
-                //repositorioPedido.guardarPedido(p1);
-
-                //Etapa 3 parte 2
-                br = new EstadoPedidoReceiver();
-                filtro = new IntentFilter();
-                filtro.addAction(EstadoPedidoReceiver.ESTADO_ACEPTADO);
-                getApplication().getApplicationContext().registerReceiver(br, filtro);
-                final Intent i = new Intent();
-
-                //Espero que hilo que guarda los datos termine para poder continuar...
-                try {
-                    hiloGuardarPedido.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                //Etapa 3 parte 1
-                Runnable r = new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.currentThread().sleep(10000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
-                        // buscar pedidos no aceptados y aceptarlos automáticamente
-                        //List<Pedido> lista = repositorioPedido.getLista();
-                        List<Pedido> lista = MyDatabase.getAllPedidos();
-                        boolean hayCambios = false;
-
-                        for (Pedido p : lista) {
-                            if (p.getEstado().equals(Pedido.Estado.REALIZADO)){
-
-                                p.setEstado(Pedido.Estado.ACEPTADO);
-
-                                i.putExtra("idPedido",p.getId());
-                                i.setAction(EstadoPedidoReceiver.ESTADO_ACEPTADO);
-                                sendBroadcast(i);
-
-                                hayCambios = true;
+                    //Etapa 3 parte 1
+                    Runnable r = new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Thread.currentThread().sleep(10000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
                             }
-                        }
 
-                        //Si hay cambios
-                        if(hayCambios){
-                            //Actualizo los pedidos en la BD
-                            MyDatabase.updatePedidos(lista);
-                        }
+                            // buscar pedidos no aceptados y aceptarlos automáticamente
+                            //List<Pedido> lista = repositorioPedido.getLista();
+                            List<Pedido> lista = MyDatabase.getAllPedidos();
+                            boolean hayCambios = false;
+
+                            for (Pedido p : lista) {
+                                if (p.getEstado().equals(Pedido.Estado.REALIZADO)){
+
+                                    p.setEstado(Pedido.Estado.ACEPTADO);
+
+                                    i.putExtra("idPedido",p.getId());
+                                    i.setAction(EstadoPedidoReceiver.ESTADO_ACEPTADO);
+                                    sendBroadcast(i);
+
+                                    hayCambios = true;
+                                }
+                            }
+
+                            //Si hay cambios
+                            if(hayCambios){
+                                //Actualizo los pedidos en la BD
+                                MyDatabase.updatePedidos(lista);
+                            }
 
                         /*
                         runOnUiThread(new Runnable() {
@@ -261,12 +243,20 @@ public class Alta_pedidos extends AppCompatActivity{
                             }
                         });
                         */
-                    }
-                };
-                Thread unHilo = new Thread(r);
-                unHilo.start();
+                        }
+                    };
+                    Thread unHilo = new Thread(r);
+                    unHilo.start();
 
-                finish();
+                    finish();
+                }else{
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(Alta_pedidos.this, "No se ha agregado ningún producto", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
         });
 

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import ar.edu.utn.frsf.dam.isi.laboratorio02.Productos_ofrecidos;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Categoria;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Pedido;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.PedidoDetalle;
@@ -101,7 +102,7 @@ public class MyDatabase {
         productoDAO = db.productoDAO();
         pedidoDAO = db.pedidoDAO();
         pedidoDetalleDAO = db.pedidoDetalleDAO();
-        /*
+
         if(!FLAG_INICIALIZADO){
 
             Runnable r2 = new Runnable() {
@@ -124,7 +125,7 @@ public class MyDatabase {
             Thread hiloBorrarTablas = new Thread(r1);
             hiloBorrarTablas.start();
 
-        }*/
+        }
 
     }
 
@@ -204,14 +205,6 @@ public class MyDatabase {
         Thread hiloTodosProductos = new Thread(r);
         hiloTodosProductos.start();
 
-        /*
-        for(Producto p:resultado){
-            Log.i("Nombre producto: ", p.getNombre());
-            Log.i("ID producto: ", p.getId().toString());
-            Log.i("Espacio: ", "-----------------");
-        }
-        */
-
         //Espero hasta que termine el hilo
         try {
             hiloTodosProductos.join();
@@ -219,14 +212,8 @@ public class MyDatabase {
             e.printStackTrace();
         }
         //Una vez que termina el hilo devuelve el resultado
-
-        //Devuelvo resultado
         return resultado;
 
-    }
-
-    public static Producto buscarProducto(String nombreProd, Double precioProd, String nombreCate){
-        return productoDAO.buscarProducto(nombreProd,precioProd, nombreCate);
     }
 
     public static void insertAllProductos(List<Producto> productos) {
@@ -312,6 +299,10 @@ public class MyDatabase {
 
     public static void insertAllPedidosDetalles (List<PedidoDetalle> pedidoDetalles) {
         pedidoDetalleDAO.insertAll(pedidoDetalles);
+    }
+
+    public static List<PedidoDetalle> buscarTodosLosDetalleDeUnPedido(int idPedido){
+        return pedidoDetalleDAO.buscarDetalleporIdPedido(idPedido);
     }
 
     public static void insertOnePedidoDetalle(PedidoDetalle pedidoDetalle) {

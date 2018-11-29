@@ -25,7 +25,7 @@ public interface PedidoDetalleDAO {
 
 
     @Query("SELECT * FROM PedidoDetalle WHERE PedidoDetalle.ped_id = :IdPedido")
-    List<PedidoConDetalles> buscarDetalleporIdPedido(int IdPedido);
+    List<PedidoDetalle> buscarDetalleporIdPedido(int IdPedido);
 
     @Insert
     void insertAll(List<PedidoDetalle> pedidosDetalles);
