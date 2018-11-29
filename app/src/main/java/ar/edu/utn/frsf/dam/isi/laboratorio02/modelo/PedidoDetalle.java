@@ -19,7 +19,7 @@ public class PedidoDetalle {
     private Pedido pedido;
 
     public PedidoDetalle(Integer cantidad, Producto producto) {
-        id=ID_DETALLE++;
+        //id=ID_DETALLE++;
         this.cantidad = cantidad;
         this.producto = producto;
     }
@@ -54,7 +54,7 @@ public class PedidoDetalle {
 
     public void setPedido(Pedido pedido) {
         this.pedido = pedido;
-        pedido.agregarDetalle(this);
+        //pedido.agregarDetalle(this);
     }
 
     @Override

@@ -10,6 +10,7 @@ import android.os.IBinder;
 import java.util.List;
 
 import ar.edu.utn.frsf.dam.isi.laboratorio02.CustomAdapters.EstadoPedidoReceiver;
+import ar.edu.utn.frsf.dam.isi.laboratorio02.dao.MyDatabase;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.dao.PedidoRepository;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Pedido;
 
@@ -42,26 +43,39 @@ public class PrepararPedidoService extends IntentService {
                 }
 
                 //Creo instancia del repositorio
-                PedidoRepository repositorioPedido = new PedidoRepository();
-                //Obtengo la lista
-                List<Pedido> lista = repositorioPedido.getLista();
-                //Cambio el estado
-                for (Pedido p : lista) {
-                    if (p.getEstado().equals(Pedido.Estado.ACEPTADO)) {
-                        p.setEstado(Pedido.Estado.EN_PREPARACION);
+                //PedidoRepository repositorioPedido = new PedidoRepository();
+                MyDatabase.getInstance(getApplicationContext());
 
-                        i.putExtra("idPedido",p.getId());
-                        i.setAction(EstadoPedidoReceiver.ESTADO_EN_PREPARACION);
-                        sendBroadcast(i);
+                //Obtengo la lista
+                //List<Pedido> lista = repositorioPedido.getLista();
+                List<Pedido> lista = MyDatabase.getAllPedidos();
+
+                boolean hayCambios = false;
+
+                if(lista != null){
+                    //Cambio el estado
+                    for (Pedido p : lista) {
+                        if (p.getEstado().equals(Pedido.Estado.ACEPTADO)) {
+                            p.setEstado(Pedido.Estado.EN_PREPARACION);
+
+                            i.putExtra("idPedido",p.getId());
+                            i.setAction(EstadoPedidoReceiver.ESTADO_EN_PREPARACION);
+                            sendBroadcast(i);
+
+                            hayCambios = true;
+                        }
+                    }
+
+                    //Si hay cambios
+                    if(hayCambios){
+                        //Actualizo los pedidos en la BD
+                        MyDatabase.updatePedidos(lista);
                     }
                 }
-
-
             }
         };
-        Thread unHi = new Thread();
-        new Thread(r , ("unHi")).start();
-
+        Thread unHi = new Thread(r);
+        unHi.start();
     }
 
 

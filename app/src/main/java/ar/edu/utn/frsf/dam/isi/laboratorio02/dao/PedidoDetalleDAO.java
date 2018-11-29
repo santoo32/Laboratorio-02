@@ -36,6 +36,9 @@ public interface PedidoDetalleDAO {
     @Update
     void update(PedidoDetalle pedidosDetalle);
 
+    @Update
+    void updateAll(List<PedidoDetalle> pedidosDetalle);
+
     @Delete
     void delete(PedidoDetalle pedidosDetalle);
 }

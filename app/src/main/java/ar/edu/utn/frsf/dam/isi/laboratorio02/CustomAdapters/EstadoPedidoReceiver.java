@@ -31,7 +31,6 @@ public class EstadoPedidoReceiver extends BroadcastReceiver {
     public void onReceive(final Context context, Intent intent) {
 
         Bundle extras = intent.getExtras();
-        //Me devuelve que el id es 0
         final Integer id = extras.getInt("idPedido");
         //p1 = new PedidoRepository();
         //Pedido ped;

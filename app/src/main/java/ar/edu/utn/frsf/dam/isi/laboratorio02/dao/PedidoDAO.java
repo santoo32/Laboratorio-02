@@ -24,10 +24,8 @@ public interface PedidoDAO {
     @Query("SELECT * FROM Pedido WHERE Pedido.id = :pedidoID ")
     Pedido cargarPedidoId(int pedidoID);
 
-    /*
-    @Query("SELECT * FROM Pedido WHERE id = :detalleIdPedido")
-    List<PedidoConDetalles> buscarDetalleporIdPedido(int detalleIdPedido);
-    */
+    @Query ("SELECT * FROM PedidoDetalle WHERE PedidoDetalle.ped_id = :idPedido")
+    List<PedidoDetalle> getPedidoDetallesDeProducto(int idPedido);
 
 
     @Insert

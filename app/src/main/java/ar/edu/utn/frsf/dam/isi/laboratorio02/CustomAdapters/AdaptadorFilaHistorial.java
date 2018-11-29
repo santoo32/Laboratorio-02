@@ -21,23 +21,23 @@ import ar.edu.utn.frsf.dam.isi.laboratorio02.Historial_pedidos;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.PedidoHolder;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.Productos_ofrecidos;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.R;
+import ar.edu.utn.frsf.dam.isi.laboratorio02.dao.MyDatabase;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.Pedido;
 import ar.edu.utn.frsf.dam.isi.laboratorio02.modelo.PedidoDetalle;
 
 public class AdaptadorFilaHistorial extends ArrayAdapter<Pedido> implements View.OnClickListener{
     private Context ctx;
     private List<Pedido> datos;
+    private int lastPosition = -1;
+
+
     public AdaptadorFilaHistorial(Context context,List<Pedido> objects) {
         super(context, 0, objects);
         this.ctx = context;
         this.datos = objects;
     }
 
-    private int lastPosition = -1;
-
-
-
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
         Pedido dataModel = getItem(position);
 
@@ -63,12 +63,42 @@ public class AdaptadorFilaHistorial extends ArrayAdapter<Pedido> implements View
             viewHolder.btnCancelar.setOnClickListener (new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     int indice = (int) v.getTag();
-                    Pedido pedidoSeleccionado = datos.get(indice);
-                    if( pedidoSeleccionado.getEstado().equals(Pedido.Estado.REALIZADO)|| pedidoSeleccionado.getEstado().equals(Pedido.Estado.ACEPTADO)|| pedidoSeleccionado.getEstado().equals(Pedido.Estado.EN_PREPARACION)){
+
+                    MyDatabase.getInstance(ctx);
+                    final Pedido pedidoSeleccionado = datos.get(indice);
+
+
+                    if( pedidoSeleccionado.getEstado().equals(Pedido.Estado.REALIZADO)|| pedidoSeleccionado.getEstado().equals(Pedido.Estado.ACEPTADO)/*|| pedidoSeleccionado.getEstado().equals(Pedido.Estado.EN_PREPARACION)*/){
                         pedidoSeleccionado.setEstado(Pedido.Estado.CANCELADO);
                         AdaptadorFilaHistorial.this.notifyDataSetChanged();
+
+                        Runnable r = new Runnable() {
+                            @Override
+                            public void run() {
+                                MyDatabase.updatePedido(pedidoSeleccionado);
+
+                                //Tengo que actualizar todos los pedidos detalles del producto cancelado
+                                List<PedidoDetalle> pedidoDetalle = MyDatabase.getPedidoDetallesDeProducto(pedidoSeleccionado.getId());
+
+                                for(PedidoDetalle pedDet : pedidoDetalle){
+                                    pedDet.setPedido(pedidoSeleccionado);
+                                }
+
+                                MyDatabase.updatePedidoDetalleAll(pedidoDetalle);
+                            }
+                        };
+                        Thread hiloCancelarPedido = new Thread(r);
+                        hiloCancelarPedido.start();
+
+                        try {
+                            hiloCancelarPedido.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
+
                     return;
                 }
             });
@@ -113,11 +143,6 @@ public class AdaptadorFilaHistorial extends ArrayAdapter<Pedido> implements View
 
         }
 
-
-
-
-
-
         switch (dataModel.getEstado()){
             case LISTO:
                 viewHolder.estado.setText("LISTO");
@@ -155,8 +180,6 @@ public class AdaptadorFilaHistorial extends ArrayAdapter<Pedido> implements View
             costo += detalle.get(i).getProducto().getPrecio() * detalle.get(i).getCantidad();
 
         }
-
-
         return costo;
     }
 

@@ -225,6 +225,10 @@ public class MyDatabase {
 
     }
 
+    public static Producto buscarProducto(String nombreProd, Double precioProd, String nombreCate){
+        return productoDAO.buscarProducto(nombreProd,precioProd, nombreCate);
+    }
+
     public static void insertAllProductos(List<Producto> productos) {
         productoDAO.insertAll(productos);
     }
@@ -287,10 +291,10 @@ public class MyDatabase {
     public static void deletePedido(Pedido pedido){
           pedidoDAO.delete(pedido);
     }
-    /*
-    public static Integer obtenerIdPedido(Pedido p){
-        return pedidoDAO.obtenerIdPedido(p);
-    }*/
+
+    public static List<PedidoDetalle> getPedidoDetallesDeProducto(int idPedido){
+        return pedidoDAO.getPedidoDetallesDeProducto(idPedido);
+    }
 
     //--------------------------------------------------------------------------
     //                              PedidoDetalle
@@ -317,6 +321,10 @@ public class MyDatabase {
 
     public static void updatePedidoDetalle(PedidoDetalle pedidoDetalle) {
         pedidoDetalleDAO.update(pedidoDetalle);
+    }
+
+    public static void updatePedidoDetalleAll(List<PedidoDetalle> pedidoDetalle) {
+        pedidoDetalleDAO.updateAll(pedidoDetalle);
     }
 
     public static void deletePedidoDetalle(PedidoDetalle pedidoDetalle){

@@ -148,10 +148,49 @@ public class Productos_ofrecidos extends AppCompatActivity {
         listprod.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Producto prod = (Producto) adapterView.getItemAtPosition(i);
-                ID = prod.getId();
-                Log.d("TAGGGGGG", prod.getNombre());
+                //Producto prod = (Producto) adapterView.getItemAtPosition(i);
+                //Producto prod = (Producto) adaptador_prod.getItem(i);
+                final Producto prod = listProd.get((int) l);
+                //final Producto prod = (Producto) adapterView.getItemAtPosition((int)l);
+
+                System.out.println("---------------------------");
+
+                System.out.println("Datos del producto: "+prod.getId());
+                System.out.println("Datos del producto: "+prod.getNombre());
+                System.out.println("Datos del producto: "+prod.getPrecio());
+                System.out.println("Datos del producto: "+prod.getCategoria());
+                Runnable r = new Runnable() {
+                    @Override
+                    public void run() {
+                        MyDatabase.getInstance(getApplicationContext());
+                        Producto prodCompleto = MyDatabase.buscarProducto(prod.getNombre(),prod.getPrecio(),prod.getCategoria().getNombre());
+                        if(prodCompleto != null) {
+                            ID = prodCompleto.getId();
+
+                            System.out.println("Datos del producto: "+prodCompleto);
+                        }else{
+                            System.out.println("NO SE DEVUELVE NADA");
+                        }
+                    }
+                };
+                Thread hilo = new Thread(r);
+                hilo.start();
+
+                try {
+                    hilo.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                System.out.println("---------------------------");
+                System.out.println("Tamaño de la lista de productos: "+listProd.size());
+                System.out.println("long l: "+l);
+
+                System.out.println("---------------------------");
+                System.out.println("ID del producto: "+ID);
+                System.out.println("---------------------------");
             }
+
         });
 
 
@@ -183,7 +222,7 @@ public class Productos_ofrecidos extends AppCompatActivity {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             categoriaSeleccionada = (Categoria) parent.getItemAtPosition(position);
-            List<Producto> listProd = MyDatabase.buscarPorCategoria(categoriaSeleccionada);
+            listProd = MyDatabase.buscarPorCategoria(categoriaSeleccionada);
 
             if (listProd != null) {
                 adaptador_prod = new ArrayAdapter<Producto>(getApplicationContext(), android.R.layout.simple_list_item_single_choice, listProd);

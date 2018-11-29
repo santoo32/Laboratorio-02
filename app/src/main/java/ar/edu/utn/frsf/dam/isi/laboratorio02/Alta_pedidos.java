@@ -172,18 +172,30 @@ public class Alta_pedidos extends AppCompatActivity{
                             pd.setPedido(p1);
                         }
 
+                        /*
                         Log.i("Cantidad de detalles: ", String.valueOf(detalle.size()));
                         for(PedidoDetalle d : detalle){
-                            Log.i("Datos idPedidoDetalle: ", d.getId().toString());
-                            Log.i("Datos idPedido: ", d.getPedido().getId().toString());
+                            System.out.println(d.getCantidad());
+                            System.out.println(d.getProducto());
                             System.out.println(d.getPedido());
                             Log.i("-------------------","---------------------------");
-                        }
+                        }*/
 
                         //guardo el pedidoDetalle
                         MyDatabase.insertAllPedidosDetalles(detalle);
-                        /*for(PedidoDetalle pd : detalle){
-                            MyDatabase.insertOnePedidoDetalle(pd);
+
+                        /*
+                        List<PedidoDetalle> pedDet = new ArrayList<>();
+                        pedDet = MyDatabase.getAllPedidosDetalle();
+                        if(pedDet != null && pedDet.size()!= 0){
+                            System.out.println("Cantidad de detalles guardados: "+ pedDet.size());
+                            for(PedidoDetalle d : pedDet){
+                                System.out.println("Datos pedidoDetalle guardados: "+d);
+                                Log.i("-------------------","---------------------------");
+                            }
+                        }else{
+                            Toast.makeText(Alta_pedidos.this, "No guarda el pedidoDetalle", Toast.LENGTH_SHORT).show();
+
                         }*/
                     }
                 };
@@ -227,9 +239,6 @@ public class Alta_pedidos extends AppCompatActivity{
 
                                 p.setEstado(Pedido.Estado.ACEPTADO);
 
-                                //Por cada producto que cambio de estado llamo al receiver
-                                Log.i("id pasado al reciver ", p.getId().toString());
-
                                 i.putExtra("idPedido",p.getId());
                                 i.setAction(EstadoPedidoReceiver.ESTADO_ACEPTADO);
                                 sendBroadcast(i);
@@ -256,13 +265,6 @@ public class Alta_pedidos extends AppCompatActivity{
                 };
                 Thread unHilo = new Thread(r);
                 unHilo.start();
-
-                //Espero que se termine de ejecutar unHilo para poder continuar.
-                try {
-                    unHilo.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
 
                 finish();
             }
@@ -298,6 +300,7 @@ public class Alta_pedidos extends AppCompatActivity{
             public void run() {
                 PedidoDetalle d = new PedidoDetalle(cantidad, MyDatabase.cargarPorIdProducto(ID));
                 detalle.add(d);
+
             }
         };
         Thread crearPedidoDetalle = new Thread(r);
